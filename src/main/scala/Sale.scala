@@ -8,6 +8,7 @@ class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
            var totalPrice: Double, customer: Customer = null) {
   for(item <- listOfItems) totalPrice = totalPrice + item.salePrice
 
+  var elliott = true
   def generateReceipt()
 
   def canPayWithLoyalty(customer: Customer): Boolean
