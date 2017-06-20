@@ -1,5 +1,4 @@
 import java.time.LocalDateTime
-
 import scala.collection.mutable.ArrayBuffer
 
 /**

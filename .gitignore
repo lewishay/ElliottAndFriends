@@ -1,9 +1,9 @@
 *.class
 *.log
-*.idea
+../.idea
 # sbt specific
 dist/*
-target/
+project/target/
 project/
 lib_managed/
 src_managed/
