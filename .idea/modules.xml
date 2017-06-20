@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/elliottandfriends.iml" filepath="$PROJECT_DIR$/.idea/modules/elliottandfriends.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/elliottandfriends-build.iml" filepath="$PROJECT_DIR$/.idea/modules/elliottandfriends-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src.iml" filepath="$PROJECT_DIR$/src.iml" />
     </modules>
   </component>
 </project>
