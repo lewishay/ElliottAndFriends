@@ -19,4 +19,12 @@ class TestSuite extends FunSuite {
     assert(theCustomer.GetIsLoyalCustomer() == true)
     assert(theCustomer.GetLoyaltyPoints() == 9001)
   }
+  test("Staff class exists"){
+    val theStaff = new Staff(1, "Iain", "Fraser", "Staff")
+    assert (theStaff.GetID() == 1)
+    assert (theStaff.GetFirstName() == "Iain")
+    assert (theStaff.GetSurname () == "Fraser")
+    assert (theStaff.GetJobTitle() == "Staff")
+  }
+
 }
