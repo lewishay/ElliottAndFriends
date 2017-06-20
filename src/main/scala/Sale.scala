@@ -9,7 +9,11 @@ class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
   for(item <- listOfItems) totalPrice = totalPrice + item.salePrice
 
 
-  def generateReceipt()
+  def generateReceipt(): Unit = {
 
-  def canPayWithLoyalty(customer: Customer): Boolean
+  }
+
+  def canPayWithLoyalty(customer: Customer): Boolean = {
+    false
+  }
 }
