@@ -4,3 +4,4 @@
 class Customer(id: Int, name: String, email: String, isLoyalCustomer: Boolean, loyaltyPoints: Int) {
   var thiswontwork = true
 }
+//dasdasdas
