@@ -9,7 +9,8 @@ class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
   for(item <- listOfItems) totalPrice = totalPrice + item.salePrice
 
 
-  def generateReceipt()
+  def generateReceipt(timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock], totalPrice: Double)
+
 
   def canPayWithLoyalty(customer: Customer): Boolean
 }

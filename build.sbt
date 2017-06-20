@@ -6,3 +6,4 @@ scalaVersion := "2.10.6"
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.24"
