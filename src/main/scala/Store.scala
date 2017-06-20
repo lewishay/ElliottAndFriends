@@ -4,35 +4,74 @@ import scala.collection.mutable.ArrayBuffer
   * Created by Lewis on 19/06/2017.
   */
 class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale]) {
-  def login(): Boolean
+  def getID(): String = id
 
-  def createCustomer()
+  def getStock(): ArrayBuffer[Stock] = basket
 
-  def createStaff()
+  def getSales(): ArrayBuffer[Sale] = listOfSales
 
-  def createStock()
+  def login(username: String, password: String): Boolean = {
+    var toReturn = false
+    toReturn
+  }
 
-  def search(searchTerm: String): List[Stock]
+  def createCustomer(): Unit = {
 
-  def editCustomer(customerToEdit: Customer)
+  }
 
-  def editStaff(staffToEdit: Staff)
+  def createStaff(): Unit = {
 
-  def editStock(stockToEdit: Stock)
+  }
 
-  def delete(toDelete: Any)
+  def createStock(): Unit = {
 
-  def makeSale()
+  }
 
-  def clearBasket()
+  def search(searchTerm: String): List[Stock]  = {
+    null
+  }
 
-  def calculateTodaysProfit(): Double
+  def editCustomer(customerToEdit: Customer): Unit = {
 
-  def listTodaysSales()
+  }
 
-  def previousDaysSales()
+  def editStaff(staffToEdit: Staff): Unit = {
 
-  def forecastExpectedProfit()
+  }
 
-  def preorderGame(customer: Customer, game: Stock)
+  def editStock(stockToEdit: Stock): Unit = {
+
+  }
+
+  def delete(toDelete: Any): Unit = {
+
+  }
+
+  def makeSale(): Unit = {
+
+  }
+
+  def clearBasket(): Unit = {
+
+  }
+
+  def calculateTodaysProfit(): Double = {
+    3.0
+  }
+
+  def listTodaysSales(): Unit = {
+
+  }
+
+  def previousDaysSales(): Unit = {
+
+  }
+
+  def forecastExpectedProfit(): Unit = {
+
+  }
+
+  def preorderGame(customer: Customer, game: Stock): Unit = {
+
+  }
 }
