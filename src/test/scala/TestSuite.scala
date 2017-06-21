@@ -1,7 +1,5 @@
 import java.time.LocalDate
 
-import java.time.LocalTime
-
 import java.time.LocalDateTime
 
 import org.scalatest.FunSuite
@@ -13,10 +11,12 @@ import scala.collection.mutable.ArrayBuffer
   */
 class TestSuite extends FunSuite {
   test("Store class exists") {
-    val theStore = new Store("test", null, null)
+    val theStore = new Store("test", null, null, null, null, null)
     assert(theStore.id == "test")
     assert(theStore.basket == null)
     assert(theStore.listOfSales == null)
+    assert(theStore.customers == null)
+    assert(theStore.staff == null)
   }
 
   test("Customer class exists") {
@@ -39,14 +39,14 @@ class TestSuite extends FunSuite {
   test("Sale is made") {
     val dateTime = LocalDateTime.of(2017, 5, 16, 8, 30)
     val sale = new Sale(1, dateTime, new ArrayBuffer[Stock], null, 50.0)
-    val store = new Store("1", new ArrayBuffer[Stock], new ArrayBuffer[Sale])
+    val store = new Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     store.listOfSales += sale
     assert(store.listOfSales.length == 1)
   }
 
   test("Basket is clear") {
     val date = LocalDate.of(2017, 4, 17)
-    val store = new Store("1", new ArrayBuffer[Stock], new ArrayBuffer[Sale])
+    val store = new Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     val x = new Stock(1, 35.0, 30.0, 100, "Game", "Nioh", "Playstation 4 age 18", date)
     store.basket += x
     assert(store.basket.length == 1)
@@ -55,7 +55,7 @@ class TestSuite extends FunSuite {
   }
 
   test("Calculate today's profits"){
-    var store = new Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty)
+    var store = new Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     var todaysSales: ArrayBuffer[Sale] = ArrayBuffer.empty
     todaysSales += Sale(
       1,
@@ -75,7 +75,7 @@ class TestSuite extends FunSuite {
   }
 
   test("List today's sales"){
-    var store = new Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty)
+    var store = new Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     var todaysSales: ArrayBuffer[Sale] = ArrayBuffer.empty
     todaysSales += Sale(
       1,
