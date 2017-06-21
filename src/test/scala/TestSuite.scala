@@ -54,8 +54,6 @@ class TestSuite extends FunSuite {
     assert(store.basket.isEmpty)
   }
 
-
-
   test("Calculate today's profits"){
     var store = new Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty)
     var todaysSales: ArrayBuffer[Sale] = ArrayBuffer.empty

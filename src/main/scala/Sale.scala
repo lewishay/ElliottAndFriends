@@ -4,11 +4,11 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by Iain on 21/06/2017.
   */
-case class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
+class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
            var totalPrice: Double = 0, customer: Customer = null) {
   for (item <- listOfItems) totalPrice = totalPrice + item.salePrice
   if (customer != null) {
-   val customer.loyaltyPoints = totalPrice.toInt + 10
+    canPayWithLoyalty(customer)
   }
 
 
@@ -22,15 +22,15 @@ case class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Sto
   }
 
 
-def canPayWithLoyalty(customer: Customer,totalPrice: Double, isLoyalCustomer : Boolean): Unit = {
-  if (customer != null && isLoyalCustomer == true && customer.loyaltyPoints >= totalPrice) {
+def canPayWithLoyalty(customer: Customer): Unit = {
+  if (customer != null && customer.isLoyalCustomer == true && customer.loyaltyPoints >= totalPrice) {
 
-    customer.loyaltyPoints - totalPrice = totalPrice
+    customer.loyaltyPoints -= totalPrice.toInt
 
-    println("your loyalty points have been used to pay for your item" + customer.loyaltyPoints)
+    println("the customers new loyalty points value is " + customer.loyaltyPoints)
   }
   else {
-    println("you do not have enough loyalty points, show me the scrilla")
+    println("the customer is a disloyal son of a bitch an needs to show you the scrilla ")
   }
 }
 }
