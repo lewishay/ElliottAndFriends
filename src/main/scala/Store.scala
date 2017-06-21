@@ -1,3 +1,5 @@
+import java.time.LocalDateTime
+
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -42,12 +44,18 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
 
   }
 
-  def makeSale(): Unit = {
+  def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
+    if (customer == null) {
+      listOfSales += new Sale(id, timeOfSale, listOfItems)
+    }
+    else{
+     listOfSales += new Sale(id, timeOfSale, listOfItems, customer)
+    }
 
   }
 
   def clearBasket(): Unit = {
-
+    basket.clear()
   }
 
   def calculateTodaysProfit(): Double = {
