@@ -51,23 +51,20 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     else{
      listOfSales += new Sale(id, timeOfSale, listOfItems, customer)
     }
-
   }
 
   def clearBasket(): Unit = {
     basket.clear()
   }
 
-  def calculateTodaysProfit(): Double = {
-    3.0
+  def calculateTodaysProfit(todaysSales: ArrayBuffer[Sale]): Double = {
+    var profit: Double = 0
+    todaysSales.foreach(sale=> sale.listOfItems.foreach(stockItem => profit += (stockItem.salePrice - stockItem.costPerUnit)))
+    profit
   }
 
-  def listTodaysSales(todaysSales: ArrayBuffer[Sale]): Unit = {
-    //if we have a sales.txt file we can literally do this dynamically with a string of .maps filtering by date
-    //LocalDate use for release date of an item in stock is not good - we will have to be able to specify a date for a preorder
-    //stock needs getters/to be a case class
-
-
+  var listTodaysSales = (todaysSales: ArrayBuffer[Sale]) => {
+    todaysSales.map(sale=> {println(s"Sale " + sale.id); sale.listOfItems.foreach(stockItem => println("  " + stockItem.productName + "    = " + stockItem.salePrice)); println("Total = " + sale.totalPrice)})
   }
 
   def previousDaysSales(): Unit = {
