@@ -5,7 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by Lewis on 19/06/2017.
   */
-case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale]) {
+case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale], customers: ArrayBuffer[Customer], staff: ArrayBuffer[Staff], heldStock: ArrayBuffer[Stock]) {
 
   def login(username: String, password: String): Boolean = {
     var toReturn = false
@@ -40,8 +40,14 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
 
   }
 
-  def delete(toDelete: Any): Unit = {
-
+  def delete[T](toDelete: T): Unit = {
+    toDelete match{
+      case toDelete: Stock =>
+      case toDelete: Staff => println("")
+      case toDelete: Customer => println("")
+      case _ => println("Please select a Customer, Staff Member, or Stock Item to be deleted")
+//    { { { { { { C U R L Y B O I S } } } } } }
+    }
   }
 
   def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
