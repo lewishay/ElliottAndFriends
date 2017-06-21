@@ -11,7 +11,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 class TestSuite extends FunSuite {
   test("Store class exists") {
-    val theStore = new Store("test", null, null, null, null, null)
+    val theStore = Store("test", null, null, null, null, null)
     assert(theStore.id == "test")
     assert(theStore.basket == null)
     assert(theStore.listOfSales == null)
@@ -20,16 +20,16 @@ class TestSuite extends FunSuite {
   }
 
   test("Customer class exists") {
-    val theCustomer = new Customer(1, "Elliott", "Xx_WomackRocks_xX@Womack.Me", true, 9001)
+    val theCustomer = Customer(1, "Elliott", "Xx_WomackRocks_xX@Womack.Me", true, 9001)
     assert(theCustomer.id == 1)
     assert(theCustomer.name == "Elliott")
     assert(theCustomer.email == "Xx_WomackRocks_xX@Womack.Me")
-    assert(theCustomer.isLoyalCustomer == true)
+    assert(theCustomer.isLoyalCustomer)
     assert(theCustomer.loyaltyPoints == 9001)
   }
 
   test("Staff class exists") {
-    val theStaff = new Staff(1, "Iain", "Fraser", "Staff")
+    val theStaff = Staff(1, "Iain", "Fraser", "Staff")
     assert(theStaff.staffId == 1)
     assert(theStaff.firstName == "Iain")
     assert(theStaff.surname == "Fraser")
@@ -51,9 +51,35 @@ class TestSuite extends FunSuite {
 
   test("Stock has been added") {
     val store = Store("1", ArrayBuffer.empty, ArrayBuffer.empty, ArrayBuffer.empty, ArrayBuffer.empty, ArrayBuffer.empty)
-    val stock = Stock(1, 45.0, 30.0, 90, "T-shirt", "Oddish", "It's oddish, but now.... on a t-shirt", LocalDate)
+    val stock = Stock(1, 45.0, 30.0, 90, "T-shirt", "Oddish", "It's oddish, but now.... on a t-shirt", LocalDate.now)
     store.heldStock += stock
     assert(store.heldStock.length == 1)
+  }
+
+  test("Cased delete function works"){
+    val store = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
+
+    store.staff += Staff(1, "Jane", "Doe", "Manager")
+    assert (store.staff.nonEmpty)
+    store.heldStock += Stock(1, 20.00, 10.00, 5, "Game", "Nier: Automata", " ", LocalDate.now)
+    assert (store.heldStock.nonEmpty)
+    store.customers += Customer(1, "Jane Doe", "jane.doe@gmail.com", true, 100)
+    assert (store.customers.nonEmpty)
+
+
+    val jane: Staff = Staff(1, "Jane", "Doe", "Manager")
+    store.delete(jane)
+    assert (store.staff.isEmpty)
+
+    val nier: Stock = Stock(1, 20.00, 10.00, 5, "Game", "Nier: Automata", " ", LocalDate.now)
+    store.delete(nier)
+    assert (store.heldStock.isEmpty)
+
+    val janedoe: Customer = Customer(1, "Jane Doe", "jane.doe@gmail.com", true, 100)
+    store.delete(janedoe)
+    assert (store.customers.isEmpty)
+
+    store.delete("{ { { { { C U R L Y B O I S } } } } }")
   }
 
   test("Sale is made") {

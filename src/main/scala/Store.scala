@@ -45,9 +45,9 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
 
   def delete[T](toDelete: T): Unit = {
     toDelete match{
-      case toDelete: Stock => if(!heldStock.isEmpty) heldStock = heldStock.filter(_ != toDelete)
-      case toDelete: Staff => if(!staff.isEmpty) staff = staff.filter(_ != toDelete)
-      case toDelete: Customer => if(!customers.isEmpty) customers = customers.filter(_ != toDelete)
+      case toDelete: Stock => if(heldStock.nonEmpty) heldStock = heldStock.filter(_ != toDelete)
+      case toDelete: Staff => if(staff.nonEmpty) staff = staff.filter(_ != toDelete)
+      case toDelete: Customer => if(customers.nonEmpty) customers = customers.filter(_ != toDelete)
       case _ => println("Please select a Customer, Staff Member, or Stock Item to be deleted")
       //    { { { { { { C U R L Y B O I S } } } } } }
     }
