@@ -1,0 +1,11 @@
+Elliot Games Text file.
+
+Staff Table.
+
+StaffID, FirstName, Surname, JobTitle
+
+1, Iain, Fraser, Staff
+2, Elliot, Womack, Manager
+3, Adam, Clark, Staff
+4, Lewis, Hay, Staff
+5 Adam, Dye, Staff

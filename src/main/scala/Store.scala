@@ -1,38 +1,81 @@
+import java.time.LocalDateTime
+
 import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by Lewis on 19/06/2017.
   */
-class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale]) {
-  def login(): Boolean
+case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale]) {
 
-  def createCustomer()
+  def login(username: String, password: String): Boolean = {
+    var toReturn = false
+    toReturn
+  }
 
-  def createStaff()
+  def createCustomer(): Unit = {
 
-  def createStock()
+  }
 
-  def search(searchTerm: String): List[Stock]
+  def createStaff(): Unit = {
 
-  def editCustomer(customerToEdit: Customer)
+  }
 
-  def editStaff(staffToEdit: Staff)
+  def createStock(): Unit = {
 
-  def editStock(stockToEdit: Stock)
+  }
 
-  def delete(toDelete: Any)
+  def search(searchTerm: String): List[Stock]  = {
+    null
+  }
 
-  def makeSale()
+  def editCustomer(customerToEdit: Customer): Unit = {
 
-  def clearBasket()
+  }
 
-  def calculateTodaysProfit(): Double
+  def editStaff(staffToEdit: Staff): Unit = {
 
-  def listTodaysSales()
+  }
 
-  def previousDaysSales()
+  def editStock(stockToEdit: Stock): Unit = {
 
-  def forecastExpectedProfit()
+  }
 
-  def preorderGame(customer: Customer, game: Stock)
+  def delete(toDelete: Any): Unit = {
+
+  }
+
+  def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
+    if (customer == null) {
+      listOfSales += new Sale(id, timeOfSale, listOfItems)
+    }
+    else{
+     listOfSales += new Sale(id, timeOfSale, listOfItems, customer)
+    }
+  }
+
+  def clearBasket(): Unit = {
+    basket.clear()
+  }
+
+  def calculateTodaysProfit(todaysSales: ArrayBuffer[Sale]): Double = {
+    var profit: Double = 0
+    todaysSales.foreach(sale=> sale.listOfItems.foreach(stockItem => profit += (stockItem.salePrice - stockItem.costPerUnit)))
+    profit
+  }
+
+  var listTodaysSales = (todaysSales: ArrayBuffer[Sale]) => {
+    todaysSales.map(sale=> {println(s"Sale " + sale.id); sale.listOfItems.foreach(stockItem => println("  " + stockItem.productName + "    = " + stockItem.salePrice)); println("Total = " + sale.totalPrice)})
+  }
+
+  def previousDaysSales(): Unit = {
+
+  }
+
+  def forecastExpectedProfit(): Unit = {
+
+  }
+
+  def preorderGame(customer: Customer, game: Stock): Unit = {
+
+  }
 }

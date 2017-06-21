@@ -1,6 +1,4 @@
 /**
   * Created by Lewis on 19/06/2017.
   */
-class Staff(id: Int, name: String, jobTitle: String) {
-
-}
+case class Staff(staffId: Int, firstName: String, surname: String, jobTitle: String)
