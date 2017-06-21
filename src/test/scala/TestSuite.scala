@@ -1,6 +1,6 @@
 import java.time.LocalDate
 
-import java.time.LocalTime
+import
 
 import java.time.LocalDateTime
 
@@ -53,6 +53,8 @@ class TestSuite extends FunSuite {
     store.clearBasket()
     assert(store.basket.isEmpty)
   }
+
+
 
   test("Calculate today's profits"){
     var store = new Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty)

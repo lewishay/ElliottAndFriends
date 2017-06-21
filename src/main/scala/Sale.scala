@@ -2,18 +2,35 @@ import java.time.LocalDateTime
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  * Created by Lewis on 19/06/2017.
+  * Created by Iain on 21/06/2017.
   */
 case class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
-           customer: Customer = null, var totalPrice: Double = 0) {
-  for(item <- listOfItems) totalPrice = totalPrice + item.salePrice
+           var totalPrice: Double = 0, customer: Customer = null) {
+  for (item <- listOfItems) totalPrice = totalPrice + item.salePrice
+  if (customer != null) {
+   val customer.loyaltyPoints = totalPrice.toInt + 10
+  }
 
 
   def generateReceipt(): Unit = {
 
+    println("the time of this sale is" + timeOfSale)
+    println("the item you are buying" + listOfItems)
+    println("the total cost of this product is" + totalPrice)
+    println("this item could of gotten you" + (totalPrice + 10))
+
   }
 
-  def canPayWithLoyalty(customer: Customer): Boolean = {
-    false
+
+def canPayWithLoyalty(customer: Customer,totalPrice: Double, isLoyalCustomer : Boolean): Unit = {
+  if (customer != null && isLoyalCustomer == true && customer.loyaltyPoints >= totalPrice) {
+
+    customer.loyaltyPoints - totalPrice = totalPrice
+
+    println("your loyalty points have been used to pay for your item" + customer.loyaltyPoints)
   }
+  else {
+    println("you do not have enough loyalty points, show me the scrilla")
+  }
+}
 }
