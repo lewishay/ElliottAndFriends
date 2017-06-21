@@ -3,12 +3,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by Lewis on 19/06/2017.
   */
-class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale]) {
-  def getID(): String = id
-
-  def getStock(): ArrayBuffer[Stock] = basket
-
-  def getSales(): ArrayBuffer[Sale] = listOfSales
+case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale]) {
 
   def login(username: String, password: String): Boolean = {
     var toReturn = false
@@ -59,7 +54,11 @@ class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sal
     3.0
   }
 
-  def listTodaysSales(): Unit = {
+  def listTodaysSales(todaysSales: ArrayBuffer[Sale]): Unit = {
+    //if we have a sales.txt file we can literally do this dynamically with a string of .maps filtering by date
+    //LocalDate use for release date of an item in stock is not good - we will have to be able to specify a date for a preorder
+    //stock needs getters/to be a case class
+
 
   }
 

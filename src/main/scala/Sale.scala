@@ -4,7 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by Lewis on 19/06/2017.
   */
-class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
+case class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
            var totalPrice: Double, customer: Customer = null) {
   for(item <- listOfItems) totalPrice = totalPrice + item.salePrice
 
