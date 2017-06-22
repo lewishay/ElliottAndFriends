@@ -1,13 +1,13 @@
-1,60.0,55.0,0,Game,Battlefront2,Star Wars 12,2017-11-20
+1,60.0,55.0,0,Game,Battlefront 2,Star Wars 12,2017-11-20
 2,80.0,79.0,20,Game,Call Of Duty,FPS 18,2017-10-02
-3,25.0,12.0,400,Game,Mario,family based fun 3,2015-10-12
+3,25.0,12.0,400,Game,Super Mario Galaxy,Platformer,2015-10-12
 4,30.0,25.0,50,Game,Witcher 3,fantasy 18,2014-11-30
-5,10.0,0.0,50,Misc,Joker Tee,T-Shirt,2017-06-21
-6,15.0,5.0,20,Misc,Pop Vinyl Figure,Statue,2017-06-21
-7,200.0,100.0,300,Hardware,Playstation4,Boxed console with 1 controller,2014-05-02
-8,280.0,150.0,150,Hardware,NintendoSwitch,Boxed console with 2 joy-cons,2017-04-15
+5,10.0,0.0,50,Misc,Joker T-Shirt,T-Shirt,2017-06-21
+6,15.0,5.0,20,Misc,Pop Vinyl Batman Figurine,Statue,2017-06-21
+7,200.0,100.0,300,Hardware,Playstation 4,Boxed console with 1 controller,2014-05-02
+8,280.0,150.0,150,Hardware,Nintendo Switch,Boxed console with 2 joy-cons,2017-04-15
 9,600.0,450.0,60,Hardware,Nvidia 1080 Ti,Graphics card,2016-03-04
-10,40.0,30.0,Game,Kingdom Hearts 2.875 Remix Last Hit Hyper Fighting,Disney RPG,2017-02-17
-11,30.0,25.0,Game,Metroid,Metroidvania,2004-08-27
-12,7.0,4.0,Misc,Nintendo Mug,2010-02-03
-13,10.0,9.0,Misc,Xbox Live Points,2012-08-12
+10,40.0,30.0,5,Game,Kingdom Hearts 2.875 Remix Last Hit Hyper Fighting,Disney RPG,2017-02-17
+11,30.0,25.0,25,Game,Metroid,Metroidvania,2004-08-27
+12,7.0,4.0,20,Misc,Nintendo Mug,Mug,2010-02-03
+13,10.0,9.0,30,Misc,500 Xbox Live Points,Online Credit,2012-08-12

@@ -85,8 +85,10 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     profit
   }
 
-  var listTodaysSales = (todaysSales: ArrayBuffer[Sale]) => {
-    todaysSales.map(sale=> {println(s"Sale " + sale.id); sale.listOfItems.foreach(stockItem => println("  " + stockItem.productName + "    = " + stockItem.salePrice)); println("Total = " + sale.totalPrice)})
+  def listTodaysSales(todaysSales: ArrayBuffer[Sale]): Double = {
+    var sellings: Double = 0
+    todaysSales.foreach(sale=> sale.listOfItems.foreach(stockItem => sellings += stockItem.salePrice))
+    sellings
   }
 
   var previousDaysSales = (yesterdaysSales: ArrayBuffer[Sale]) => {
@@ -102,7 +104,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     val arrayOfCustomers = ArrayBuffer[Customer]()
     for (line <- Source.fromFile(currentDirectory).getLines()) {
       val customersToReturn: Array[String] = line.split(",")
-      val customerToAdd = new Customer(customersToReturn(0).toInt, customersToReturn(1), customersToReturn(2), customersToReturn(3).toBoolean, customersToReturn(4).toInt)
+      val customerToAdd = Customer(customersToReturn(0).toInt, customersToReturn(1), customersToReturn(2), customersToReturn(3).toBoolean, customersToReturn(4).toInt)
       arrayOfCustomers += customerToAdd
     }
     arrayOfCustomers
@@ -120,11 +122,11 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
       var arrayOfStock = ArrayBuffer[Stock]()
       for (i <- 0 to stock.length - 1) {
         val stockToAdd = stock(i).split("#")
-        arrayOfStock += new Stock(stockToAdd(0).toInt, stockToAdd(1).toDouble, stockToAdd(2).toDouble, stockToAdd(3).toInt, stockToAdd(4), stockToAdd(5), stockToAdd(6), stringToLocalDate(stockToAdd(7)))
+        arrayOfStock += Stock(stockToAdd(0).toInt, stockToAdd(1).toDouble, stockToAdd(2).toDouble, stockToAdd(3).toInt, stockToAdd(4), stockToAdd(5), stockToAdd(6), stringToLocalDate(stockToAdd(7)))
       }
       val customerArray = salesToReturn(4).split("#")
-      val customerToAdd = new Customer(customerArray(0).toInt, customerArray(1), customerArray(2), customerArray(3).toBoolean, customerArray(4).toInt)
-      val salesToAdd = new Sale(salesToReturn(0).toInt, stringToLocalDateTime(salesToReturn(1)), arrayOfStock, 0, customerToAdd)
+      val customerToAdd = Customer(customerArray(0).toInt, customerArray(1), customerArray(2), customerArray(3).toBoolean, customerArray(4).toInt)
+      val salesToAdd = Sale(salesToReturn(0).toInt, stringToLocalDateTime(salesToReturn(1)), arrayOfStock, 0, customerToAdd)
       listOfSales += salesToAdd
     }
   }
@@ -134,7 +136,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     val arrayOfStaff = ArrayBuffer[Staff]()
     for (line <- Source.fromFile(currentDirectory).getLines()) {
       val staffToReturn: Array[String] = line.split(",")
-      val staffToAdd = new Staff(staffToReturn(0).toInt, staffToReturn(1), staffToReturn(2), staffToReturn(3))
+      val staffToAdd = Staff(staffToReturn(0).toInt, staffToReturn(1), staffToReturn(2), staffToReturn(3))
       arrayOfStaff += staffToAdd
     }
     arrayOfStaff
@@ -145,7 +147,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     val arrayOfStock = ArrayBuffer[Stock]()
     for (line <- Source.fromFile(currentDirectory).getLines()) {
       val stockToReturn: Array[String] = line.split(",")
-      val stockToAdd = new Stock(stockToReturn(0).toInt, stockToReturn(1).toDouble, stockToReturn(2).toDouble, stockToReturn(3).toInt, stockToReturn(4), stockToReturn(5), stockToReturn(6), stringToLocalDate(stockToReturn(7)))
+      val stockToAdd = Stock(stockToReturn(0).toInt, stockToReturn(1).toDouble, stockToReturn(2).toDouble, stockToReturn(3).toInt, stockToReturn(4), stockToReturn(5), stockToReturn(6), stringToLocalDate(stockToReturn(7)))
       arrayOfStock += stockToAdd
     }
     arrayOfStock
