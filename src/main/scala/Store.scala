@@ -66,13 +66,21 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
 
   def delete[T](toDelete: T): Unit = {
     toDelete match{
-      case toDelete: Stock => if(heldStock.nonEmpty) heldStock = heldStock.filter(_ != toDelete)
-      case toDelete: Staff => if(staff.nonEmpty) staff = staff.filter(_ != toDelete)
-      case toDelete: Customer => if(customers.nonEmpty) customers = customers.filter(_ != toDelete)
+      case toDelete: Stock => if(heldStock.nonEmpty){
+        heldStock = heldStock.filter(_ != toDelete)
+        saveStock(heldStock)
+      }
+      case toDelete: Staff => if(staff.nonEmpty) {
+        staff = staff.filter(_ != toDelete)
+        saveStaff(staff)
+      }
+      case toDelete: Customer => if(customers.nonEmpty) {
+        customers = customers.filter(_ != toDelete)
+        saveCustomers(customers)
+      }
       case _ => println("Please select a Customer, Staff Member, or Stock Item to be deleted")
-      //    { { { { { { C U R L Y B O I S } } } } } }
     }
-  } //here
+  }
 
   def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
     //generate receipt defined here
