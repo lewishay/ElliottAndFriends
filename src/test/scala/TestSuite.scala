@@ -119,6 +119,16 @@ class TestSuite extends FunSuite {
     assert(store.basket.isEmpty)
   }
 
+  test("List of sales is clear"){
+    val store = Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
+    val sale = Sale(1, null, new ArrayBuffer[Stock], 50.0, null)
+    store.listOfSales += sale
+    assert(store.listOfSales.length == 1)
+    store.clearListOfSales()
+    assert(store.basket.isEmpty)
+  }
+
+
   test("Calculate today's profits"){
     var store = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     var todaysSales: ArrayBuffer[Sale] = ArrayBuffer.empty
