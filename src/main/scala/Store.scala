@@ -55,12 +55,19 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
   }
 
   def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
+    //generate receipt defined here
+
     if (customer == null) {
       listOfSales += Sale(id, timeOfSale, listOfItems)
     }
-    else{
-     listOfSales += Sale(id, timeOfSale, listOfItems, 0, customer)
+    else if
+    (customer != null && !customer.isLoyalCustomer) {
+      listOfSales += Sale(id, timeOfSale, listOfItems, 0 , customer)
     }
+    else {
+      listOfSales += Sale(id, timeOfSale, listOfItems, 0 , customer)
+    }
+
   }
 
   def clearBasket(): Unit = {
