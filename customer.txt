@@ -3,3 +3,11 @@
 3,Alex Taylor,A.Taylor@qa.com,true,70
 4,Paul Dyer,Paul.Dyer@Bt.com,true,80
 5,Alok PushesBack,A.Pushback@qa.com,true,50
+6,Gandalf the Grey,sweetjazz@middleearth.com,true,100000
+7,Gandalf the White,sweetjazz@middleearth.com,true,100000
+8,Gandalf the Pimpin,sweetjazz@middleearth.com,true,100000
+9,Gandalf the Offwhite,shouldhaveuseddaz@middleearth.com,true,200000
+10,Gandalf the Grey,sweetjazz@middleearth.com,true,100000
+11,Gandalf the Grey,sweetjazz@middleearth.com,true,100000
+12,Gandalf the Grey,sweetjazz@middleearth.com,true,100000
+13,Gandalf the Grey,sweetjazz@middleearth.com,true,100000
