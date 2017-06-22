@@ -88,7 +88,7 @@ class TestSuite extends FunSuite {
 
   test("Sale is made") {
     val dateTime = LocalDateTime.of(2017, 5, 16, 8, 30)
-    val sale = Sale(1, dateTime, new ArrayBuffer[Stock], null, 50.0)
+    val sale = Sale(1, dateTime, new ArrayBuffer[Stock], 50.0, null)
     val store = Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     store.listOfSales += sale
     assert(store.listOfSales.length == 1)
@@ -145,7 +145,7 @@ class TestSuite extends FunSuite {
   }
   test("Load staff"){
     val theStaff = new Staff(1, "Iain", "Fraser", "Staff")
-    val theStore = new Store("test", null, null)
+    val theStore = new Store("test", null, null, null, null, null)
     var arrayOfStaff = ArrayBuffer[Staff]()
     arrayOfStaff = theStore.loadStaff()
     assert (theStaff.staffId == arrayOfStaff(0).staffId)
@@ -155,7 +155,7 @@ class TestSuite extends FunSuite {
   }
   test("Load customer"){
     val theCustomer = new Customer(1, "James Gallagher", "j.Gallagher@qa.com", true, 20)
-    val theStore = new Store("test", null, null)
+    val theStore = new Store("test", null, null, null, null, null)
     var arrayOfCustomers = ArrayBuffer[Customer]()
     arrayOfCustomers = theStore.loadCustomers()
     assert(theCustomer.id == arrayOfCustomers(0).id)
@@ -166,7 +166,7 @@ class TestSuite extends FunSuite {
   }
   test("Load stock"){
     val testStock = new Stock(1,60,55,0,"Game","Battlefront2","Star Wars 12",LocalDate.parse("2017-11-20", DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-    val theStore = new Store("test", null,  null)
+    val theStore = new Store("test", null, null, null, null, null)
     var arrayOfStock = ArrayBuffer[Stock]()
     arrayOfStock = theStore.loadStock()
     assert(testStock.id == arrayOfStock(0).id)
@@ -179,7 +179,7 @@ class TestSuite extends FunSuite {
     assert(testStock.releaseDate == arrayOfStock(0).releaseDate)
   }
   test("Load sales"){
-    val theStore = new Store("test", null, new ArrayBuffer[Sale]())
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
     theStore.loadSales()
     var arrayOfStock = ArrayBuffer[Stock]()
     arrayOfStock = theStore.loadStock()
