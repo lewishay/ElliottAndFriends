@@ -76,15 +76,11 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     todaysSales.map(sale=> {println(s"Sale " + sale.id); sale.listOfItems.foreach(stockItem => println("  " + stockItem.productName + "    = " + stockItem.salePrice)); println("Total = " + sale.totalPrice)})
   }
 
-  def previousDaysSales(): Unit = {
-
+  var previousDaysSales = (yesterdaysSales: ArrayBuffer[Sale]) => {
+    yesterdaysSales.map(sale=> {println(s"Sale " + sale.id); sale.listOfItems.foreach(stockItem => println("  " + stockItem.productName + "    = " + stockItem.salePrice)); println("Total = " + sale.totalPrice)})
   }
 
   def forecastExpectedProfit(): Unit = {
-
-  }
-
-  def preorderGame(customer: Customer, game: Stock): Unit = {
 
   }
 }
