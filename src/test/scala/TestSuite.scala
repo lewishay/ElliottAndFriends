@@ -1,13 +1,6 @@
-import java.time.LocalDate
-
-import java.time.LocalDateTime
-
 import org.scalatest.FunSuite
 import java.time.{LocalDate, LocalDateTime}
 import java.time.format.DateTimeFormatter
-
-import scala.collection.mutable.ArrayBuffer
-
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -38,6 +31,18 @@ class TestSuite extends FunSuite {
     assert(theStaff.firstName == "Iain")
     assert(theStaff.surname == "Fraser")
     assert(theStaff.jobTitle == "Staff")
+  }
+
+  test("Stock class exists") {
+    val theStock = Stock(1, 45.0, 30.0, 90, "T-shirt", "Oddish", "It's oddish, but now.... on a t-shirt", LocalDate.now)
+    assert(theStock.id == 1)
+    assert(theStock.salePrice == 45.0)
+    assert(theStock.costPerUnit == 30.0)
+    assert(theStock.quantity == 90)
+    assert(theStock.typeOfStock == "T-shirt")
+    assert(theStock.productName == "Oddish")
+    assert(theStock.info == "It's oddish, but now.... on a t-shirt")
+    assert(theStock.releaseDate == LocalDate.now)
   }
   test("Customer has been created") {
     val store = Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)

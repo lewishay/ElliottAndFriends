@@ -1,3 +1,4 @@
+import scala.collection.mutable.ArrayBuffer
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control._
@@ -11,6 +12,17 @@ import scalafx.stage.Stage
   * Created by Lewis on 20/06/2017.
   */
 object GUI extends JFXApp {
+  val store = new Store("Manchester store", new ArrayBuffer[Stock], new ArrayBuffer[Sale], new ArrayBuffer[Customer],
+                        new ArrayBuffer[Staff], new ArrayBuffer[Stock])
+  var searchResults = new ArrayBuffer[Stock]
+  val searchResultsList = new ListView[String]
+  val gamesList = new ListView[String]
+  val hardwareList = new ListView[String]
+  val miscList = new ListView[String]
+  val customerList = new ListView[String]
+  val employeeList = new ListView[String]
+  val basketList = new ListView[String]
+
   val loginStage: Stage = new JFXApp.PrimaryStage() {
     outer =>
     title = "Login"
@@ -44,16 +56,22 @@ object GUI extends JFXApp {
       val gamesButton = new Button("Games"); gamesButton.setPrefSize(380, 200); gamesButton.layoutX = 35
       gamesButton.layoutY = 450; gamesButton.setStyle("-fx-font-size: 30pt; -fx-background-color: #d6bcf2")
       gamesButton.onAction = handle {
+        gamesList.getItems.clear
+        store.loadStock().filter(x => x.typeOfStock == "Game").foreach(x => gamesList.getItems.add(x.productName))
         gamesStage.show(); outer.close()
       }
       val hardwareButton = new Button("Hardware"); hardwareButton.setPrefSize(380, 200); hardwareButton.layoutX = 450
       hardwareButton.layoutY = 450; hardwareButton.setStyle("-fx-font-size: 30pt; -fx-background-color: #d6bcf2")
       hardwareButton.onAction = handle {
+        hardwareList.getItems.clear
+        store.loadStock().filter(x => x.typeOfStock == "Hardware").foreach(x => hardwareList.getItems.add(x.productName))
         hardwareStage.show(); outer.close()
       }
       val miscButton = new Button("Misc."); miscButton.setPrefSize(380, 200); miscButton.layoutX = 865
       miscButton.layoutY = 450; miscButton.setStyle("-fx-font-size: 30pt; -fx-background-color: #d6bcf2")
       miscButton.onAction = handle {
+        miscList.getItems.clear
+        store.loadStock().filter(x => x.typeOfStock == "Misc").foreach(x => miscList.getItems.add(x.productName))
         miscStage.show(); outer.close()
       }
       val financeButton = new Button("Finance"); financeButton.setPrefSize(250, 100); financeButton.layoutX = 1000
@@ -64,16 +82,22 @@ object GUI extends JFXApp {
       val customerButton = new Button("Customers"); customerButton.setPrefSize(250, 100); customerButton.layoutX = 30
       customerButton.layoutY = 300; customerButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #a0d9ef")
       customerButton.onAction = handle {
+        customerList.getItems.clear
+        store.loadCustomers().foreach(x => customerList.getItems.add(x.name))
         customerStage.show(); outer.close()
       }
       val employeeButton = new Button("Employees"); employeeButton.setPrefSize(250, 100); employeeButton.layoutX = 300
       employeeButton.layoutY = 300; employeeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #a0d9ef")
       employeeButton.onAction = handle {
+        employeeList.getItems.clear
+        store.loadStaff().foreach(x => employeeList.getItems.add(x.firstName + " " + x.surname))
         employeeStage.show(); outer.close()
       }
       val basketButton = new Button("Basket"); basketButton.setPrefSize(300, 100); basketButton.layoutX = 620
       basketButton.layoutY = 300; basketButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #f7ed9e")
       basketButton.onAction = handle {
+        basketList.getItems.clear
+        store.basket.foreach(x => basketList.getItems.add(x.productName))
         basketStage.show(); outer.close()
       }
       val searchField = new TextField(); searchField.layoutX = 50; searchField.layoutY = 200
@@ -81,7 +105,9 @@ object GUI extends JFXApp {
       val searchButton = new Button("Search"); searchButton.setPrefSize(250, 50); searchButton.layoutX = 960
       searchButton.layoutY = 200; searchButton.setStyle("-fx-font-size: 20pt; -fx-background-color: #b6edcb")
       searchButton.onAction = handle {
-        //search for searchField.text with the Store method
+        searchResultsList.getItems.clear
+        searchResults = store.search(searchField.getText)
+        searchResults.foreach(x => searchResultsList.getItems.add(x.productName))
         searchStage.show(); outer.close()
       }
       content = List(bannerView, gamesButton, hardwareButton, miscButton, financeButton, searchField, searchButton,
@@ -96,9 +122,8 @@ object GUI extends JFXApp {
       fill = Color.web("#f2fff7")
       val resultsText = new Label("Search Results"); resultsText.setStyle("-fx-font-size: 30pt");
       resultsText.layoutX = 20; resultsText.layoutY = 20
-      val resultsBox = new TextArea() //need to populate with search results
-      resultsBox.setPrefSize(900, 600); resultsBox.layoutX = 20; resultsBox.layoutY = 100
-      resultsBox.setStyle("-fx-font-size: 20pt")
+      searchResultsList.layoutX = 20; searchResultsList.layoutY = 100; searchResultsList.setStyle("-fx-font-size: 20pt")
+      searchResultsList.setPrefSize(900, 600); searchResultsList.setEditable(false)
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 150); homeButton.layoutX = 950
       homeButton.layoutY = 550; homeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #b6edcb")
       val basketButton = new Button("Add to\nbasket"); basketButton.setPrefSize(300, 150); basketButton.layoutX = 950
@@ -107,8 +132,9 @@ object GUI extends JFXApp {
         homeStage.show(); outer.close()
       }
       basketButton.onAction = handle {
-        //method to add item to basket
-        new Alert(AlertType.None, "hey").show()
+        for(item <- store.loadStock()) {
+          if(item.productName == searchResultsList.getSelectionModel.getSelectedItem) store.basket += item
+        }
       }
       val editButton = new Button("Edit"); editButton.setPrefSize(300, 100); editButton.layoutX = 950
       editButton.layoutY = 100; editButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #b6edcb")
@@ -120,7 +146,7 @@ object GUI extends JFXApp {
       deleteButton.onAction = handle {
         //method here
       }
-      content = List(resultsText, resultsBox, homeButton, basketButton, editButton, deleteButton)
+      content = List(resultsText, searchResultsList, homeButton, basketButton, editButton, deleteButton)
     }
   }
 
@@ -131,9 +157,8 @@ object GUI extends JFXApp {
       fill = Color.web("#f7f2ff")
       val gameText = new Label("Games"); gameText.setStyle("-fx-font-size: 30pt");
       gameText.layoutX = 20; gameText.layoutY = 20
-      val gameList = new TextArea() //need to populate with game titles sorted alphabetically
-      gameList.setPrefSize(900, 600); gameList.layoutX = 20; gameList.layoutY = 100
-      gameList.setStyle("-fx-font-size: 20pt")
+      gamesList.setPrefSize(900, 600); gamesList.layoutX = 20; gamesList.layoutY = 100
+      gamesList.setStyle("-fx-font-size: 20pt")
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 100); homeButton.layoutX = 950
       homeButton.layoutY = 600; homeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
       val basketButton = new Button("Add to\nbasket"); basketButton.setPrefSize(300, 150); basketButton.layoutX = 950
@@ -142,12 +167,20 @@ object GUI extends JFXApp {
         homeStage.show(); outer.close()
       }
       basketButton.onAction = handle {
-        //method to add item to basket
+        for(item <- store.loadStock()) {
+          if(item.productName == gamesList.getSelectionModel.getSelectedItem) store.basket += item
+        }
       }
       val createButton = new Button("Add"); createButton.setPrefSize(300, 100); createButton.layoutX = 950
       createButton.layoutY = 50; createButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
       createButton.onAction = handle {
-        //method here
+        val dialog = new Dialog[Stock]() {
+          initOwner(gamesStage)
+          title = "Add game"
+          headerText = "Enter game details"
+        }
+        dialog.showAndWait()
+//        store.createStock()
       }
       val editButton = new Button("Edit"); editButton.setPrefSize(300, 100); editButton.layoutX = 950
       editButton.layoutY = 170; editButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
@@ -159,7 +192,14 @@ object GUI extends JFXApp {
       deleteButton.onAction = handle {
         //method here
       }
-      content = List(gameText, gameList, homeButton, basketButton, createButton, editButton, deleteButton)
+      val preorderButton = new Button("View preorders"); preorderButton.setPrefSize(300, 50)
+      preorderButton.layoutX = 550; preorderButton.layoutY = 10
+      preorderButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
+      preorderButton.onAction = handle {
+        //function to filter the loaded games by only games with a future release date
+      }
+      content = List(gameText, gamesList, homeButton, basketButton, createButton, editButton, deleteButton,
+                    preorderButton)
     }
   }
 
@@ -170,7 +210,6 @@ object GUI extends JFXApp {
       fill = Color.web("#f7f2ff")
       val hardwareText = new Label("Hardware"); hardwareText.setStyle("-fx-font-size: 30pt");
       hardwareText.layoutX = 20; hardwareText.layoutY = 20
-      val hardwareList = new TextArea() //need to populate with hardware titles sorted alphabetically
       hardwareList.setPrefSize(900, 600); hardwareList.layoutX = 20; hardwareList.layoutY = 100
       hardwareList.setStyle("-fx-font-size: 20pt")
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 100); homeButton.layoutX = 950
@@ -181,7 +220,9 @@ object GUI extends JFXApp {
         homeStage.show(); outer.close()
       }
       basketButton.onAction = handle {
-        //method to add item to basket
+        for(item <- store.loadStock()) {
+          if(item.productName == hardwareList.getSelectionModel.getSelectedItem) store.basket += item
+        }
       }
       val createButton = new Button("Add"); createButton.setPrefSize(300, 100); createButton.layoutX = 950
       createButton.layoutY = 50; createButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
@@ -209,7 +250,6 @@ object GUI extends JFXApp {
       fill = Color.web("#f7f2ff")
       val miscText = new Label("Miscellaneous items"); miscText.setStyle("-fx-font-size: 30pt");
       miscText.layoutX = 20; miscText.layoutY = 20
-      val miscList = new TextArea() //need to populate with misc items sorted alphabetically
       miscList.setPrefSize(900, 600); miscList.layoutX = 20; miscList.layoutY = 100
       miscList.setStyle("-fx-font-size: 20pt")
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 100); homeButton.layoutX = 950
@@ -220,7 +260,9 @@ object GUI extends JFXApp {
         homeStage.show(); outer.close()
       }
       basketButton.onAction = handle {
-        //method to add item to basket
+        for(item <- store.loadStock()) {
+          if(item.productName == miscList.getSelectionModel.getSelectedItem) store.basket += item
+        }
       }
       val createButton = new Button("Add"); createButton.setPrefSize(300, 100); createButton.layoutX = 950
       createButton.layoutY = 50; createButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
@@ -248,7 +290,6 @@ object GUI extends JFXApp {
       fill = Color.AliceBlue
       val customerText = new Label("Customers"); customerText.setStyle("-fx-font-size: 30pt");
       customerText.layoutX = 20; customerText.layoutY = 20
-      val customerList = new TextArea() //need to populate with misc items sorted alphabetically
       customerList.setPrefSize(900, 600); customerList.layoutX = 20; customerList.layoutY = 100
       customerList.setStyle("-fx-font-size: 20pt")
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 150); homeButton.layoutX = 950
@@ -282,7 +323,6 @@ object GUI extends JFXApp {
       fill = Color.AliceBlue
       val employeeText = new Label("Employees"); employeeText.setStyle("-fx-font-size: 30pt");
       employeeText.layoutX = 20; employeeText.layoutY = 20
-      val employeeList = new TextArea() //need to populate with misc items sorted alphabetically
       employeeList.setPrefSize(900, 600); employeeList.layoutX = 20; employeeList.layoutY = 100
       employeeList.setStyle("-fx-font-size: 20pt")
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 150); homeButton.layoutX = 950
@@ -316,7 +356,6 @@ object GUI extends JFXApp {
       fill = Color.web("#fffded")
       val basketText = new Label("Basket"); basketText.setStyle("-fx-font-size: 30pt")
       basketText.layoutX = 20; basketText.layoutY = 20
-      val basketList = new TextArea(); //need to populate with items in the basket
       basketList.setPrefSize(900, 600); basketList.layoutX = 20; basketList.layoutY = 100
       basketList.setStyle("-fx-font-size: 20pt")
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 150); homeButton.layoutX = 950
@@ -329,9 +368,17 @@ object GUI extends JFXApp {
       checkoutButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #f7ed9e")
       checkoutButton.onAction = handle {
         //need to add in method to checkout items
+        basketList.getItems.clear()
+        store.clearBasket()
       }
       val removeButton = new Button("Remove item"); removeButton.setPrefSize(300, 100); removeButton.layoutX = 950;
       removeButton.layoutY = 120; removeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #f7ed9e")
+      removeButton.onAction = handle {
+        for(item <- store.loadStock()) {
+          if(item.productName == basketList.getSelectionModel.getSelectedItem) store.basket -= item
+        }
+        basketList.getItems.remove(basketList.getSelectionModel.getSelectedItem)
+      }
       content = List(basketText, basketList, homeButton, checkoutButton, removeButton)
     }
   }

@@ -34,8 +34,13 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     saveStock(tempStock)
   }
 
-  def search(searchTerm: String): List[Stock]  = {
-    null
+  def search(searchTerm: String): ArrayBuffer[Stock]  = {
+    var tempBuffer = new ArrayBuffer[Stock]()
+    for(item <- loadStock()) item match {
+      case _ if(item.productName.toLowerCase.contains(searchTerm.toLowerCase)) => tempBuffer += item
+      case _ =>
+    }
+    tempBuffer
   }
 
   def editCustomer(customerToEdit: Customer): Unit = {
@@ -70,12 +75,19 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
   } //here
 
   def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
+    //generate receipt defined here
+
     if (customer == null) {
       listOfSales += Sale(id, timeOfSale, listOfItems)
     }
-    else{
-     listOfSales += Sale(id, timeOfSale, listOfItems, 0, customer)
+    else if
+    (customer != null && !customer.isLoyalCustomer) {
+      listOfSales += Sale(id, timeOfSale, listOfItems, 0 , customer)
     }
+    else {
+      listOfSales += Sale(id, timeOfSale, listOfItems, 0 , customer)
+    }
+
   }
 
   def clearBasket(): Unit = {
