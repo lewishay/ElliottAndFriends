@@ -191,6 +191,33 @@ class TestSuite extends FunSuite {
     val testSale = new Sale(1,theStore.stringToLocalDateTime("2017-06-21 12:12"), stockWeWant, 0, arrayOfCustomers(1))
     assert(testSale.totalPrice == theStore.listOfSales(0).totalPrice)
   }
+  test("Save Customer"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    var arrayOfCustomers = ArrayBuffer[Customer]()
+    arrayOfCustomers = theStore.loadCustomers()
+    theStore.saveCustomers(arrayOfCustomers)
+    println("Save of customers was successful")
+  }
+  test("Save Staff"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    var arrayOfStaff = ArrayBuffer[Staff]()
+    arrayOfStaff = theStore.loadStaff()
+    theStore.saveStaff(arrayOfStaff)
+    println("Save of staff was successful")
+  }
+  test("Save Stock"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    var arrayOfStock = ArrayBuffer[Stock]()
+    arrayOfStock = theStore.loadStock()
+    theStore.saveStock(arrayOfStock)
+    println("Save of stock was successful")
+  }
+  test("Save Sales"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    theStore.loadSales()
+    theStore.saveSales()
+    println("Save of Sales was successful")
+  }
 }
 
 

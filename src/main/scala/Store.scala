@@ -1,11 +1,8 @@
 import java.time.LocalDateTime
-
 import java.time.LocalDate
-
+import java.io._
 import scala.collection.mutable.ArrayBuffer
-
 import scala.io.Source
-
 import java.time.format.DateTimeFormatter
 
 /**
@@ -152,4 +149,41 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     temp
   }
 
+  def saveCustomers(customerToSave: ArrayBuffer[Customer]): Unit = {
+    val pw = new PrintWriter("customer.txt")
+    for(i<-0 to customerToSave.length-1){
+      pw.println(customerToSave(i).id + "," + customerToSave(i).name + "," + customerToSave(i).email + "," + customerToSave(i).isLoyalCustomer + "," + customerToSave(i).loyaltyPoints)
+    }
+    pw.close()
+  }
+
+  def saveStaff(staffToSave: ArrayBuffer[Staff]): Unit = {
+    val pw = new PrintWriter("Staff.txt")
+    for(i<-0 to staffToSave.length-1){
+      pw.println(staffToSave(i).staffId + "," + staffToSave(i).firstName + "," + staffToSave(i).surname + "," + staffToSave(i).jobTitle)
+    }
+    pw.close()
+  }
+
+  def saveStock(stockToSave: ArrayBuffer[Stock]): Unit = {
+    val pw = new PrintWriter("Stock.txt")
+    for(i<-0 to stockToSave.length-1){
+      pw.println(stockToSave(i).id + "," + stockToSave(i).salePrice + "," + stockToSave(i).costPerUnit + "," + stockToSave(i).quantity + "," + stockToSave(i).typeOfStock + "," + stockToSave(i).productName + "," + stockToSave(i).info + "," + stockToSave(i).releaseDate.toString)
+    }
+    pw.close
+  }
+
+  def saveSales(): Unit = {
+    val pw = new PrintWriter("Sales.txt")
+    for(i<-0 to listOfSales.length-1){
+      var stockForSale = ""
+      for(j<-0 to listOfSales(i).listOfItems.length - 1){
+        stockForSale += listOfSales(i).listOfItems(j).id + "#" + listOfSales(i).listOfItems(j).salePrice + "#" + listOfSales(i).listOfItems(j).costPerUnit + "#" + listOfSales(i).listOfItems(j).quantity + "#" + listOfSales(i).listOfItems(j).typeOfStock + "#" + listOfSales(i).listOfItems(j).productName + "#" + listOfSales(i).listOfItems(j).info + "#" + listOfSales(i).listOfItems(j).releaseDate.toString
+        if(j != listOfSales(i).listOfItems.length - 1) stockForSale += "@"
+      }
+      var customerToAdd = listOfSales(i).customer.id + "#" + listOfSales(i).customer.name + "#" + listOfSales(i).customer.email + "#" + listOfSales(i).customer.isLoyalCustomer + "#" + listOfSales(i).customer.loyaltyPoints
+      pw.println(listOfSales(i).id + "," + listOfSales(i).timeOfSale.toString + "," + stockForSale + "," + listOfSales(i).totalPrice + "," + customerToAdd)
+    }
+    pw.close
+  }
 }
