@@ -16,32 +16,52 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
   }
 
   def createCustomer(id: Int, name: String, email: String, isLoyalCustomer: Boolean, loyaltyPoints: Int): Unit = {
-    customers += Customer(id, name, email, isLoyalCustomer, loyaltyPoints)
+    val tempCustomers = loadCustomers()
+    tempCustomers += Customer(id, name, email, isLoyalCustomer, loyaltyPoints)
+    saveCustomers(tempCustomers)
   }
 
   def createStaff(staffId: Int, firstName: String, surname: String, jobTitle: String): Unit = {
-    staff += Staff(staffId, firstName, surname, jobTitle)
+    val tempStaff = loadStaff()
+    tempStaff += Staff(staffId, firstName, surname, jobTitle)
+    saveStaff(tempStaff)
   }
 
   def createStock(id: Int, salePrice: Double, costPerUnit: Double, quantity: Int, typeOfStock: String,
                   productName: String, info: String, releaseDate: LocalDate): Unit = {
-    heldStock += Stock(id, salePrice, costPerUnit, quantity, typeOfStock, productName, info, releaseDate)
+    val tempStock = loadStock()
+    tempStock += Stock(id, salePrice, costPerUnit, quantity, typeOfStock, productName, info, releaseDate)
+    saveStock(tempStock)
   }
 
-  def search(searchTerm: String): List[Stock]  = {
-    null
+  def search(searchTerm: String): ArrayBuffer[Stock]  = {
+    var tempBuffer = new ArrayBuffer[Stock]()
+    for(item <- loadStock()) item match {
+      case _ if(item.productName.toLowerCase.contains(searchTerm.toLowerCase)) => tempBuffer += item
+      case _ =>
+    }
+    tempBuffer
   }
 
   def editCustomer(customerToEdit: Customer): Unit = {
-
+    val listOfCustomers: ArrayBuffer[Customer] = loadCustomers()
+    val customerIndex = customerToEdit.id - 1
+    if(listOfCustomers(customerIndex).id == customerToEdit.id) listOfCustomers(customerIndex) = customerToEdit
+    saveCustomers(listOfCustomers)
   }
 
   def editStaff(staffToEdit: Staff): Unit = {
-
+    val listOfStaff: ArrayBuffer[Staff] = loadStaff()
+    val staffIndex = staffToEdit.staffId - 1
+    if(listOfStaff(staffIndex).staffId == staffToEdit.staffId) listOfStaff(staffIndex) = staffToEdit
+    saveStaff(listOfStaff)
   }
 
   def editStock(stockToEdit: Stock): Unit = {
-
+    val listOfStock: ArrayBuffer[Stock] = loadStock()
+    val stockIndex = stockToEdit.id - 1
+    if(listOfStock(stockIndex).id == stockToEdit.id) listOfStock(stockIndex) = stockToEdit
+    saveStock(listOfStock)
   }
 
   def delete[T](toDelete: T): Unit = {
@@ -52,7 +72,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
       case _ => println("Please select a Customer, Staff Member, or Stock Item to be deleted")
       //    { { { { { { C U R L Y B O I S } } } } } }
     }
-  }
+  } //here
 
   def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
     //generate receipt defined here
@@ -190,7 +210,9 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
         if(j != listOfSales(i).listOfItems.length - 1) stockForSale += "@"
       }
       var customerToAdd = listOfSales(i).customer.id + "#" + listOfSales(i).customer.name + "#" + listOfSales(i).customer.email + "#" + listOfSales(i).customer.isLoyalCustomer + "#" + listOfSales(i).customer.loyaltyPoints
-      pw.println(listOfSales(i).id + "," + listOfSales(i).timeOfSale.toString + "," + stockForSale + "," + listOfSales(i).totalPrice + "," + customerToAdd)
+      val fixFormating = listOfSales(i).timeOfSale.toString.split("T")
+      val dateStringProper = fixFormating(0) + " " + fixFormating(1)
+      pw.println(listOfSales(i).id + "," + dateStringProper + "," + stockForSale + "," + listOfSales(i).totalPrice + "," + customerToAdd)
     }
     pw.close
   }
