@@ -227,7 +227,7 @@ class TestSuite extends FunSuite {
     val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
     theStore.createCustomer(theStore.loadCustomers().length+1, "Gandalf the Grey", "sweetjazz@middleearth.com", true, 100000)
     println("Test Create Customer was successful")
-  } //6,Gandalf the Grey,sweetjazz@middleearth.com,true,100000
+  }
   test("Create Stock"){
     val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
     theStore.createStock(theStore.loadStock().length+1, 300.00, 250.00, 1, "Misc", "Gandalf's Staff", "Staff", theStore.stringToLocalDate("2002-01-01"))

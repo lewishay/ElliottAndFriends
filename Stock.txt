@@ -9,3 +9,4 @@
 9,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
 10,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
 11,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
+12,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
