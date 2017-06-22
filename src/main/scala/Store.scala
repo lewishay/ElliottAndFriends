@@ -31,8 +31,13 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     heldStock += Stock(id, salePrice, costPerUnit, quantity, typeOfStock, productName, info, releaseDate)
   }
 
-  def search(searchTerm: String): List[Stock]  = {
-    null
+  def search(searchTerm: String): ArrayBuffer[Stock]  = {
+    var tempBuffer = new ArrayBuffer[Stock]()
+    for(item <- loadStock()) item match {
+      case _ if(item.productName.toLowerCase.contains(searchTerm.toLowerCase)) => tempBuffer += item
+      case _ =>
+    }
+    tempBuffer
   }
 
   def editCustomer(customerToEdit: Customer): Unit = {
