@@ -3,6 +3,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 import org.scalatest.FunSuite
+import java.time.{LocalDate, LocalDateTime}
+import java.time.format.DateTimeFormatter
+
+import scala.collection.mutable.ArrayBuffer
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -139,7 +143,54 @@ class TestSuite extends FunSuite {
     )
     store.listTodaysSales(todaysSales)
   }
-
+  test("Load staff"){
+    val theStaff = new Staff(1, "Iain", "Fraser", "Staff")
+    val theStore = new Store("test", null, null)
+    var arrayOfStaff = ArrayBuffer[Staff]()
+    arrayOfStaff = theStore.loadStaff()
+    assert (theStaff.staffId == arrayOfStaff(0).staffId)
+    assert (theStaff.firstName ==  arrayOfStaff(0).firstName)
+    assert (theStaff.surname ==  arrayOfStaff(0).surname)
+    assert (theStaff.jobTitle == arrayOfStaff(0).jobTitle)
+  }
+  test("Load customer"){
+    val theCustomer = new Customer(1, "James Gallagher", "j.Gallagher@qa.com", true, 20)
+    val theStore = new Store("test", null, null)
+    var arrayOfCustomers = ArrayBuffer[Customer]()
+    arrayOfCustomers = theStore.loadCustomers()
+    assert(theCustomer.id == arrayOfCustomers(0).id)
+    assert(theCustomer.name == arrayOfCustomers(0).name)
+    assert(theCustomer.email == arrayOfCustomers(0).email)
+    assert(theCustomer.isLoyalCustomer == arrayOfCustomers(0).isLoyalCustomer)
+    assert(theCustomer.loyaltyPoints == arrayOfCustomers(0).loyaltyPoints)
+  }
+  test("Load stock"){
+    val testStock = new Stock(1,60,55,0,"Game","Battlefront2","Star Wars 12",LocalDate.parse("2017-11-20", DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+    val theStore = new Store("test", null,  null)
+    var arrayOfStock = ArrayBuffer[Stock]()
+    arrayOfStock = theStore.loadStock()
+    assert(testStock.id == arrayOfStock(0).id)
+    assert(testStock.salePrice == arrayOfStock(0).salePrice)
+    assert(testStock.costPerUnit == arrayOfStock(0).costPerUnit)
+    assert(testStock.quantity == arrayOfStock(0).quantity)
+    assert(testStock.typeOfStock == arrayOfStock(0).typeOfStock)
+    assert(testStock.productName == arrayOfStock(0).productName)
+    assert(testStock.info == arrayOfStock(0).info)
+    assert(testStock.releaseDate == arrayOfStock(0).releaseDate)
+  }
+  test("Load sales"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale]())
+    theStore.loadSales()
+    var arrayOfStock = ArrayBuffer[Stock]()
+    arrayOfStock = theStore.loadStock()
+    var stockWeWant = ArrayBuffer[Stock]()
+    stockWeWant += arrayOfStock(0)
+    stockWeWant += arrayOfStock(3)
+    var arrayOfCustomers = ArrayBuffer[Customer]()
+    arrayOfCustomers = theStore.loadCustomers()
+    val testSale = new Sale(1,theStore.stringToLocalDateTime("2017-06-21 12:12"), stockWeWant, 0, arrayOfCustomers(1))
+    assert(testSale.totalPrice == theStore.listOfSales(0).totalPrice)
+  }
 }
 
 

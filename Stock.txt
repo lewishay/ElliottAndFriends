@@ -1,13 +1,6 @@
-Elliot Games Text file.
-
-Stock Text File
-
-ProdID, ProdName, ProdType, ProdInfo, Age, ReleaseDate
-
-1, Battlefront2, Game, Star Wars, game, 12, 20.11.17
-2, Call Of Duty, Game, FPS, game, 18, 02.10.17
-3, Mario, Game, family based fun, 3, 12.10.15
-4, Witcher 3, game, fantasy, 18, 30.11.14
-5, jokerTee, tshirt, misc, Null, Null
-6, PopFigure, Statue, Misc, Null, Null
- 
+1,60,55,0,Game,Battlefront2,Star Wars 12,2017-11-20
+2,80,79,20,Game,Call Of Duty,FPS 18,2017-10-02
+3,25,12,400,Game,Mario,family based fun 3,2015-10-12
+4,30,25,50,Game,Witcher 3,fantasy 18,2014-11-30
+5,10,0,50,Misc,jokerTee,tshirt,2017-06-21
+6,15,5,20,Misc,PopFigure,Statue,2017-06-21
