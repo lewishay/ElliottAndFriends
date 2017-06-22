@@ -44,6 +44,16 @@ class TestSuite extends FunSuite {
     assert(theStock.info == "It's oddish, but now.... on a t-shirt")
     assert(theStock.releaseDate == LocalDate.now)
   }
+
+  test("Sale class exists") {
+    val theSale = Sale(1, null, ArrayBuffer.empty, 0, null)
+    assert(theSale.id == 1)
+    assert(theSale.timeOfSale == null)
+    assert(theSale.listOfItems.isEmpty)
+    assert(theSale.totalPrice == 0)
+    assert(theSale.customer == null)
+
+  }
   test("Customer has been created") {
     val store = Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     val customer = Customer(1, "Elliot's Friend", "ellbud@aol.com", true, 35)
@@ -108,6 +118,16 @@ class TestSuite extends FunSuite {
     store.clearBasket()
     assert(store.basket.isEmpty)
   }
+
+  test("List of sales is clear"){
+    val store = Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
+    val sale = Sale(1, null, new ArrayBuffer[Stock], 50.0, null)
+    store.listOfSales += sale
+    assert(store.listOfSales.length == 1)
+    store.clearListOfSales()
+    assert(store.basket.isEmpty)
+  }
+
 
   test("Calculate today's profits"){
     var store = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
@@ -222,6 +242,39 @@ class TestSuite extends FunSuite {
     theStore.loadSales()
     theStore.saveSales()
     println("Save of Sales was successful")
+  }
+  test("Create Customer"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    theStore.createCustomer(theStore.loadCustomers().length+1, "Gandalf the Grey", "sweetjazz@middleearth.com", true, 100000)
+    println("Test Create Customer was successful")
+  }
+  test("Create Stock"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    theStore.createStock(theStore.loadStock().length+1, 300.00, 250.00, 1, "Misc", "Gandalf's Staff", "Staff", theStore.stringToLocalDate("2002-01-01"))
+    println("Test Create Stock was successful")
+  }
+  test("Create Staff"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    theStore.createStaff(theStore.loadStaff().length+1, "James", "Java", "Staff")
+    println("Test Create Staff was successful")
+  }
+  test("Edit Customer"){
+    val customerToEdit = new Customer(9, "Gandalf the Offwhite", "shouldhaveuseddaz@middleearth.com", true, 200000)
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    theStore.editCustomer(customerToEdit)
+    println("Test Edit Customer was successful")
+  }
+  test("Edit Staff"){
+    val staffToEdit = new Staff(7, "James", "Scala", "Staff")
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    theStore.editStaff(staffToEdit)
+    println("Test Edit staff was successful")
+  }
+  test("Edit Stock"){
+    val theStore = new Store("test", null, new ArrayBuffer[Sale](), null, null, null)
+    val stockToEdit = new Stock(8,  250.00, 250.00, 1, "Misc", "Gandalf's Staff", "Staff is broken", theStore.stringToLocalDate("2002-01-01"))
+    theStore.editStock(stockToEdit)
+    println("Test Edit Stock was successful")
   }
 }
 
