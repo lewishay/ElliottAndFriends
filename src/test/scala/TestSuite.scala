@@ -44,6 +44,16 @@ class TestSuite extends FunSuite {
     assert(theStock.info == "It's oddish, but now.... on a t-shirt")
     assert(theStock.releaseDate == LocalDate.now)
   }
+
+  test("Sale class exists") {
+    val theSale = Sale(1, null, ArrayBuffer.empty, 0, null)
+    assert(theSale.id == 1)
+    assert(theSale.timeOfSale == null)
+    assert(theSale.listOfItems.isEmpty)
+    assert(theSale.totalPrice == 0)
+    assert(theSale.customer == null)
+
+  }
   test("Customer has been created") {
     val store = Store("1", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
     val customer = Customer(1, "Elliot's Friend", "ellbud@aol.com", true, 35)
