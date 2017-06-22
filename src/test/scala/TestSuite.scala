@@ -87,7 +87,7 @@ class TestSuite extends FunSuite {
     assert(theCustomer.loyaltyPoints == arrayOfCustomers(0).loyaltyPoints)
   }
   test("Load stock"){
-    val testStock = new Stock(1,60,55,0,"Game","Battlefront2","Star Wars 12",LocalDate.parse("2017-11-20", DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+    val testStock = new Stock(1,60,55,0,"Game","Battlefront 2","Star Wars 12",LocalDate.parse("2017-11-20", DateTimeFormatter.ofPattern("yyyy-MM-dd")))
     val theStore = new Store("test", null, null, null, null, null)
     var arrayOfStock = ArrayBuffer[Stock]()
     arrayOfStock = theStore.loadStock()
