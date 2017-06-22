@@ -132,8 +132,9 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
   }
 
   def clearListOfSales(): Unit = {
-
+  listOfSales.clear()
   }
+
   def loadSales(): Unit = {
     val currentDirectory = new java.io.File(".").getCanonicalPath  + "\\Sales.txt"
     clearListOfSales()
