@@ -1,3 +1,4 @@
+import scala.collection.mutable.ArrayBuffer
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control._
@@ -11,6 +12,9 @@ import scalafx.stage.Stage
   * Created by Lewis on 20/06/2017.
   */
 object GUI extends JFXApp {
+//  val store = new Store(1, )
+  var searchResults = ""
+
   val loginStage: Stage = new JFXApp.PrimaryStage() {
     outer =>
     title = "Login"
@@ -81,7 +85,7 @@ object GUI extends JFXApp {
       val searchButton = new Button("Search"); searchButton.setPrefSize(250, 50); searchButton.layoutX = 960
       searchButton.layoutY = 200; searchButton.setStyle("-fx-font-size: 20pt; -fx-background-color: #b6edcb")
       searchButton.onAction = handle {
-        //search for searchField.text with the Store method
+//        searchResults = store.search(searchField.getText()).foreach(x => searchResults += (x.productName + "\n"))
         searchStage.show(); outer.close()
       }
       content = List(bannerView, gamesButton, hardwareButton, miscButton, financeButton, searchField, searchButton,
@@ -99,6 +103,7 @@ object GUI extends JFXApp {
       val resultsBox = new TextArea() //need to populate with search results
       resultsBox.setPrefSize(900, 600); resultsBox.layoutX = 20; resultsBox.layoutY = 100
       resultsBox.setStyle("-fx-font-size: 20pt")
+//      searchResults.foreach(x => resultsBox.setText(x.productName))
       val homeButton = new Button("Home"); homeButton.setPrefSize(300, 150); homeButton.layoutX = 950
       homeButton.layoutY = 550; homeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #b6edcb")
       val basketButton = new Button("Add to\nbasket"); basketButton.setPrefSize(300, 150); basketButton.layoutX = 950
@@ -108,7 +113,6 @@ object GUI extends JFXApp {
       }
       basketButton.onAction = handle {
         //method to add item to basket
-        new Alert(AlertType.None, "hey").show()
       }
       val editButton = new Button("Edit"); editButton.setPrefSize(300, 100); editButton.layoutX = 950
       editButton.layoutY = 100; editButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #b6edcb")
@@ -159,7 +163,14 @@ object GUI extends JFXApp {
       deleteButton.onAction = handle {
         //method here
       }
-      content = List(gameText, gameList, homeButton, basketButton, createButton, editButton, deleteButton)
+      val preorderButton = new Button("View preorders"); preorderButton.setPrefSize(300, 50)
+      preorderButton.layoutX = 550; preorderButton.layoutY = 10
+      preorderButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
+      preorderButton.onAction = handle {
+        //function to filter the loaded games by only games with a future release date
+      }
+      content = List(gameText, gameList, homeButton, basketButton, createButton, editButton, deleteButton,
+                    preorderButton)
     }
   }
 
