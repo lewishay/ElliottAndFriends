@@ -1,3 +1,6 @@
+import java.time.LocalDate
+import javafx.scene.control.Alert.AlertType
+
 import scala.collection.mutable.ArrayBuffer
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
@@ -5,7 +8,6 @@ import scalafx.scene.control._
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.Includes._
 import scalafx.geometry.Insets
-import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
@@ -24,6 +26,7 @@ object GUI extends JFXApp {
   val customerList = new ListView[String]
   val employeeList = new ListView[String]
   val basketList = new ListView[String]
+  val searchField = new TextField()
 
   val loginStage: Stage = new JFXApp.PrimaryStage() {
     outer =>
@@ -32,7 +35,7 @@ object GUI extends JFXApp {
       fill = Color.web("f7eaea")
       val usernameField = new TextField(); usernameField.setPrefSize(400, 50); usernameField.layoutX = 20
       usernameField.layoutY = 30; usernameField.setStyle("-fx-font-size: 18pt")
-      val passwordField = new TextField(); passwordField.setPrefSize(400, 50); passwordField.layoutX = 20
+      val passwordField = new PasswordField(); passwordField.setPrefSize(400, 50); passwordField.layoutX = 20
       passwordField.layoutY = 105; passwordField.setStyle("-fx-font-size: 18pt")
       val usernameLabel = new Label("Staff ID"); usernameLabel.setStyle("-fx-font-size: 10pt")
       usernameLabel.layoutX = 20; usernameLabel.layoutY = 10
@@ -41,8 +44,10 @@ object GUI extends JFXApp {
       val loginButton = new Button("Login"); loginButton.setPrefSize(400, 50); loginButton.layoutX = 20
       loginButton.layoutY = 170; loginButton.setStyle("-fx-font-size: 18pt; -fx-background-color: #f9afac")
       loginButton.onAction = handle {
-        //when login feature is implemented it goes here
-        homeStage.show(); outer.close()
+        usernameField match {
+          case _ if(store.login(usernameField.getText, passwordField.getText)) => {homeStage.show(); outer.close()}
+          case _ => new Alert (AlertType.ERROR, "Not a valid login").showAndWait()
+        }
       }
       content = List(loginButton, usernameField, passwordField, usernameLabel, passwordLabel)
     }
@@ -66,7 +71,8 @@ object GUI extends JFXApp {
       hardwareButton.layoutY = 450; hardwareButton.setStyle("-fx-font-size: 30pt; -fx-background-color: #d6bcf2")
       hardwareButton.onAction = handle {
         hardwareList.getItems.clear
-        store.loadStock().filter(x => x.typeOfStock == "Hardware").foreach(x => hardwareList.getItems.add(x.productName))
+        store.loadStock().filter(x => x.typeOfStock == "Hardware").foreach(x => hardwareList.getItems.
+                                                                                                  add(x.productName))
         hardwareStage.show(); outer.close()
       }
       val miscButton = new Button("Misc."); miscButton.setPrefSize(380, 200); miscButton.layoutX = 865
@@ -79,7 +85,10 @@ object GUI extends JFXApp {
       val financeButton = new Button("Finance"); financeButton.setPrefSize(250, 100); financeButton.layoutX = 1000
       financeButton.layoutY = 300; financeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
       financeButton.onAction = handle {
-        financeStage.show(); outer.close()
+        financeButton match {
+          case _ if(store.loggedInStaff.jobTitle == "Manager") => {financeStage.show(); outer.close()}
+          case _ => new Alert (AlertType.ERROR, "You do not have permission to view this.").showAndWait ()
+        }
       }
       val customerButton = new Button("Customers"); customerButton.setPrefSize(250, 100); customerButton.layoutX = 30
       customerButton.layoutY = 300; customerButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #a0d9ef")
@@ -102,7 +111,7 @@ object GUI extends JFXApp {
         store.basket.foreach(x => basketList.getItems.add(x.productName))
         basketStage.show(); outer.close()
       }
-      val searchField = new TextField(); searchField.layoutX = 50; searchField.layoutY = 200
+      searchField.layoutX = 50; searchField.layoutY = 200
       searchField.setPrefSize(900, 50); searchField.setStyle("-fx-font-size: 20pt")
       val searchButton = new Button("Search"); searchButton.setPrefSize(250, 50); searchButton.layoutX = 960
       searchButton.layoutY = 200; searchButton.setStyle("-fx-font-size: 20pt; -fx-background-color: #b6edcb")
@@ -112,8 +121,13 @@ object GUI extends JFXApp {
         searchResults.foreach(x => searchResultsList.getItems.add(x.productName))
         searchStage.show(); outer.close()
       }
+      val logoutButton = new Button("Logout"); logoutButton.setPrefSize(100, 10); logoutButton.layoutX = 1150
+      logoutButton.layoutY = 670; logoutButton.setStyle("-fx-font-size: 10pt; -fx-background-color: #f9afac")
+      logoutButton.onAction = handle {
+        store.loggedInStaff = null; loginStage.show(); outer.close()
+      }
       content = List(bannerView, gamesButton, hardwareButton, miscButton, financeButton, searchField, searchButton,
-                    customerButton, employeeButton, basketButton)
+                    customerButton, employeeButton, basketButton, logoutButton)
     }
   }
 
@@ -141,12 +155,54 @@ object GUI extends JFXApp {
       val editButton = new Button("Edit"); editButton.setPrefSize(300, 100); editButton.layoutX = 950
       editButton.layoutY = 100; editButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #b6edcb")
       editButton.onAction = handle {
-        //method here
+        var theGame: Stock = null
+        for(item <- store.loadStock()) {
+          if(item.productName == gamesList.getSelectionModel.getSelectedItem) theGame = item
+        }
+        val dialog = new Dialog[Stock]() {
+          initOwner(gamesStage)
+          title = "Edit game details"
+          headerText = "Edit game details"
+        }
+        val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
+        val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
+        val accept = new ButtonType("Update", ButtonData.OKDone)
+        val back = new ButtonType("Back", ButtonData.CancelClose)
+        salePrice.setText(theGame.salePrice.toString); costPerUnit.setText(theGame.costPerUnit.toString)
+        quantity.setText(theGame.quantity.toString); typeOfStock.setText(theGame.typeOfStock)
+        productName.setText(theGame.productName); info.setText(theGame.info); releaseDate.setValue(theGame.releaseDate)
+        dialog.dialogPane().buttonTypes = Seq(accept, back)
+        val grid = new GridPane() {
+          hgap = 10; vgap = 10; padding = Insets(20, 100, 10, 10)
+          add(new Label("Sale Price:"), 0, 0); add(salePrice, 1, 0)
+          add(new Label("Cost Per Unit:"), 0, 1); add(costPerUnit, 1, 1)
+          add(new Label("Quantity"), 0, 2); add(quantity, 1, 2)
+          add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
+          add(new Label("Product name"), 0, 4); add(productName, 1, 4)
+          add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release date"), 0, 6); add(releaseDate, 1, 6)
+        }
+        dialog.dialogPane().content = grid
+        val result = dialog.showAndWait()
+        result match {
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            gamesList.getItems.clear()
+            store.delete(theGame)
+            store.loadStock().filter(x => x.typeOfStock == "Game").foreach(x => gamesList.getItems.add(x.productName))
+          case _ =>
+        }
       }
       val deleteButton = new Button("Delete"); deleteButton.setPrefSize(300, 100); deleteButton.layoutX = 950
       deleteButton.layoutY = 220; deleteButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #b6edcb")
       deleteButton.onAction = handle {
-        //method here
+        for(item <- store.loadStock()) {
+          if(item.productName == searchResultsList.getSelectionModel.getSelectedItem) store.delete(item)
+        }
+        searchResultsList.getItems.clear
+        searchResults = store.search(searchField.getText)
+        searchResults.foreach(x => searchResultsList.getItems.add(x.productName))
       }
       content = List(resultsText, searchResultsList, homeButton, basketButton, editButton, deleteButton)
     }
@@ -183,6 +239,7 @@ object GUI extends JFXApp {
         }
         val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
         val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
         val accept = new ButtonType("Accept", ButtonData.OKDone)
         val back = new ButtonType("Back", ButtonData.CancelClose)
         dialog.dialogPane().buttonTypes = Seq(accept, back)
@@ -194,11 +251,15 @@ object GUI extends JFXApp {
           add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
           add(new Label("Product name"), 0, 4); add(productName, 1, 4)
           add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release date"), 0, 6); add(releaseDate, 1, 6)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //add item
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            gamesList.getItems.clear()
+            store.loadStock().filter(x => x.typeOfStock == "Game").foreach(x => gamesList.getItems.add(x.productName))
           case _ =>
         }
       }
@@ -216,11 +277,12 @@ object GUI extends JFXApp {
         }
         val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
         val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
         val accept = new ButtonType("Update", ButtonData.OKDone)
         val back = new ButtonType("Back", ButtonData.CancelClose)
         salePrice.setText(theGame.salePrice.toString); costPerUnit.setText(theGame.costPerUnit.toString)
         quantity.setText(theGame.quantity.toString); typeOfStock.setText(theGame.typeOfStock)
-        productName.setText(theGame.productName); info.setText(theGame.info)
+        productName.setText(theGame.productName); info.setText(theGame.info); releaseDate.setValue(theGame.releaseDate)
         dialog.dialogPane().buttonTypes = Seq(accept, back)
         val grid = new GridPane() {
           hgap = 10; vgap = 10; padding = Insets(20, 100, 10, 10)
@@ -230,24 +292,35 @@ object GUI extends JFXApp {
           add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
           add(new Label("Product name"), 0, 4); add(productName, 1, 4)
           add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release date"), 0, 6); add(releaseDate, 1, 6)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //editCustomer
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            gamesList.getItems.clear()
+            store.delete(theGame)
+            store.loadStock().filter(x => x.typeOfStock == "Game").foreach(x => gamesList.getItems.add(x.productName))
           case _ =>
         }
       }
       val deleteButton = new Button("Delete"); deleteButton.setPrefSize(300, 100); deleteButton.layoutX = 950
       deleteButton.layoutY = 290; deleteButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
       deleteButton.onAction = handle {
-        //method here
+        for(item <- store.loadStock()) {
+          if(item.productName == gamesList.getSelectionModel.getSelectedItem) store.delete(item)
+        }
+        gamesList.getItems.clear()
+        store.loadStock().filter(x => x.typeOfStock == "Game").foreach(x => gamesList.getItems.add(x.productName))
       }
       val preorderButton = new Button("View preorders"); preorderButton.setPrefSize(300, 50)
       preorderButton.layoutX = 550; preorderButton.layoutY = 10
       preorderButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
       preorderButton.onAction = handle {
-        //function to filter the loaded games by only games with a future release date
+        gamesList.getItems.clear
+        store.loadStock().filter(x => x.typeOfStock == "Game").filter(x => x.releaseDate.isAfter(LocalDate.now())).
+          foreach(x => gamesList.getItems.add(x.productName))
       }
       content = List(gameText, gamesList, homeButton, basketButton, createButton, editButton, deleteButton,
                     preorderButton)
@@ -285,6 +358,7 @@ object GUI extends JFXApp {
         }
         val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
         val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
         val accept = new ButtonType("Accept", ButtonData.OKDone)
         val back = new ButtonType("Back", ButtonData.CancelClose)
         dialog.dialogPane().buttonTypes = Seq(accept, back)
@@ -296,11 +370,16 @@ object GUI extends JFXApp {
           add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
           add(new Label("Product name"), 0, 4); add(productName, 1, 4)
           add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release date"), 0, 6); add(releaseDate, 1, 6)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //add item
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            hardwareList.getItems.clear()
+            store.loadStock().filter(x => x.typeOfStock == "Hardware").foreach(x => hardwareList.getItems.
+                                                                                                add(x.productName))
           case _ =>
         }
       }
@@ -318,11 +397,13 @@ object GUI extends JFXApp {
         }
         val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
         val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
         val accept = new ButtonType("Update", ButtonData.OKDone)
         val back = new ButtonType("Back", ButtonData.CancelClose)
         salePrice.setText(theHardware.salePrice.toString); costPerUnit.setText(theHardware.costPerUnit.toString)
         quantity.setText(theHardware.quantity.toString); typeOfStock.setText(theHardware.typeOfStock)
-        productName.setText(theHardware.productName); info.setText(theHardware.info)
+        productName.setText(theHardware.productName); info.setText(theHardware.info);
+        releaseDate.setValue(theHardware.releaseDate)
         dialog.dialogPane().buttonTypes = Seq(accept, back)
         val grid = new GridPane() {
           hgap = 10; vgap = 10; padding = Insets(20, 100, 10, 10)
@@ -332,18 +413,29 @@ object GUI extends JFXApp {
           add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
           add(new Label("Product name"), 0, 4); add(productName, 1, 4)
           add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release Date"), 0, 6); add(releaseDate, 1, 6)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //editCustomer
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            hardwareList.getItems.clear()
+            store.delete(theHardware)
+            store.loadStock().filter(x => x.typeOfStock == "Hardware").foreach(x => hardwareList.getItems.
+                                                                                                add(x.productName))
           case _ =>
         }
       }
       val deleteButton = new Button("Delete"); deleteButton.setPrefSize(300, 100); deleteButton.layoutX = 950
       deleteButton.layoutY = 290; deleteButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
       deleteButton.onAction = handle {
-        //method here
+        for(item <- store.loadStock()) {
+          if(item.productName == hardwareList.getSelectionModel.getSelectedItem) store.delete(item)
+        }
+        hardwareList.getItems.clear
+        store.loadStock().filter(x => x.typeOfStock == "Hardware").foreach(x => hardwareList.getItems.
+                                                                                                add(x.productName))
       }
       content = List(hardwareText, hardwareList, homeButton, basketButton, createButton, editButton, deleteButton)
     }
@@ -380,6 +472,7 @@ object GUI extends JFXApp {
         }
         val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
         val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
         val accept = new ButtonType("Accept", ButtonData.OKDone)
         val back = new ButtonType("Back", ButtonData.CancelClose)
         dialog.dialogPane().buttonTypes = Seq(accept, back)
@@ -391,11 +484,15 @@ object GUI extends JFXApp {
           add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
           add(new Label("Product name"), 0, 4); add(productName, 1, 4)
           add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release Date"), 0, 6); add(releaseDate, 1, 6)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //add item
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            miscList.getItems.clear()
+            store.loadStock().filter(x => x.typeOfStock == "Misc").foreach(x => miscList.getItems.add(x.productName))
           case _ =>
         }
       }
@@ -413,11 +510,12 @@ object GUI extends JFXApp {
         }
         val salePrice = new TextField(); val costPerUnit = new TextField(); val quantity = new TextField()
         val typeOfStock = new TextField(); val productName = new TextField(); val info = new TextField()
+        val releaseDate = new DatePicker()
         val accept = new ButtonType("Update", ButtonData.OKDone)
         val back = new ButtonType("Back", ButtonData.CancelClose)
         salePrice.setText(theMisc.salePrice.toString); costPerUnit.setText(theMisc.costPerUnit.toString)
         quantity.setText(theMisc.quantity.toString); typeOfStock.setText(theMisc.typeOfStock)
-        productName.setText(theMisc.productName); info.setText(theMisc.info)
+        productName.setText(theMisc.productName); info.setText(theMisc.info); releaseDate.setValue(theMisc.releaseDate)
         dialog.dialogPane().buttonTypes = Seq(accept, back)
         val grid = new GridPane() {
           hgap = 10; vgap = 10; padding = Insets(20, 100, 10, 10)
@@ -427,18 +525,27 @@ object GUI extends JFXApp {
           add(new Label("Type of Stock"), 0, 3); add(typeOfStock, 1, 3)
           add(new Label("Product name"), 0, 4); add(productName, 1, 4)
           add(new Label("Info"), 0, 5); add(info, 1, 5)
+          add(new Label("Release Date"), 0, 6); add(releaseDate, 1, 6)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //editCustomer
+          case Some(accept) => store.createStock(99, salePrice.getText.toDouble, costPerUnit.getText.toDouble,
+            quantity.getText.toInt, typeOfStock.getText, productName.getText, info.getText, releaseDate.getValue)
+            miscList.getItems.clear()
+            store.delete(theMisc)
+            store.loadStock().filter(x => x.typeOfStock == "Misc").foreach(x => miscList.getItems.add(x.productName))
           case _ =>
         }
       }
       val deleteButton = new Button("Delete"); deleteButton.setPrefSize(300, 100); deleteButton.layoutX = 950
       deleteButton.layoutY = 290; deleteButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #d6bcf2")
       deleteButton.onAction = handle {
-        //method here
+        for(item <- store.loadStock()) {
+          if(item.productName == miscList.getSelectionModel.getSelectedItem) store.delete(item)
+        }
+        miscList.getItems.clear
+        store.loadStock().filter(x => x.typeOfStock == "Misc").foreach(x => miscList.getItems.add(x.productName))
       }
       content = List(miscText, miscList, homeButton, basketButton, createButton, editButton, deleteButton)
     }
@@ -480,7 +587,10 @@ object GUI extends JFXApp {
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //add item
+          case Some(accept) => store.createCustomer(99, name.getText, email.getText,
+                                                    isLoyalCustomer.getSelectionModel.getSelectedItem, 0)
+            customerList.getItems.clear()
+            store.loadCustomers().foreach(x => customerList.getItems.add(x.name))
           case _ =>
         }
       }
@@ -513,14 +623,22 @@ object GUI extends JFXApp {
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //add item
+          case Some(accept) => store.createCustomer(99, name.getText, email.getText,
+            isLoyalCustomer.getSelectionModel.getSelectedItem, 0)
+            customerList.getItems.clear()
+            store.delete(theCustomer)
+            store.loadCustomers().foreach(x => customerList.getItems.add(x.name))
           case _ =>
         }
       }
       val deleteButton = new Button("Delete"); deleteButton.setPrefSize(300, 100); deleteButton.layoutX = 950
       deleteButton.layoutY = 340; deleteButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #a0d9ef")
       deleteButton.onAction = handle {
-        //method here
+        for(item <- store.loadCustomers()) {
+          if(item.name == customerList.getSelectionModel.getSelectedItem) store.delete(item)
+        }
+        customerList.getItems.clear
+        store.loadCustomers().foreach(x => customerList.getItems.add(x.name))
       }
       content = List(customerText, customerList, homeButton, createButton, editButton, deleteButton)
     }
@@ -561,7 +679,9 @@ object GUI extends JFXApp {
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
         result match {
-          case Some(accept) => //add item
+          case Some(accept) => store.createStaff(99, firstName.getText, surname.getText, jobTitle.getText)
+            employeeList.getItems.clear()
+            store.loadStaff().foreach(x => employeeList.getItems.add(x.firstName + " " + x.surname))
           case _ =>
         }
       }
@@ -589,17 +709,29 @@ object GUI extends JFXApp {
           add(new Label("Surname:"), 0, 1); add(surname, 1, 1)
           add(new Label("Job title"), 0, 2); add(jobTitle, 1, 2)
         }
-        dialog.dialogPane().content = grid
-        val result = dialog.showAndWait()
-        result match {
-          case Some(accept) => //add item
-          case _ =>
+        grid match {
+          case _ if(store.loggedInStaff.jobTitle == "Manager") => {
+            dialog.dialogPane().content = grid
+            val result = dialog.showAndWait()
+            result match {
+              case Some(accept) => store.createStaff(99, firstName.getText, surname.getText, jobTitle.getText)
+                employeeList.getItems.clear()
+                store.delete(theEmployee)
+                store.loadStaff().foreach(x => employeeList.getItems.add(x.firstName + " " + x.surname))
+              case _ =>
+            }
+          }
+          case _ => new Alert(AlertType.ERROR, "You do not have permission to do this.").showAndWait()
         }
       }
       val deleteButton = new Button("Delete"); deleteButton.setPrefSize(300, 100); deleteButton.layoutX = 950
       deleteButton.layoutY = 340; deleteButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #a0d9ef")
       deleteButton.onAction = handle {
-        //method here
+        for(item <- store.loadStaff()) {
+          if((item.firstName + " " + item.surname) == employeeList.getSelectionModel.getSelectedItem) store.delete(item)
+        }
+        employeeList.getItems.clear()
+        store.loadStaff().foreach(x => employeeList.getItems.add(x.firstName + " " + x.surname))
       }
       content = List(employeeText, employeeList, homeButton, createButton, editButton, deleteButton)
     }
@@ -623,9 +755,30 @@ object GUI extends JFXApp {
       checkoutButton.layoutX = 950; checkoutButton.layoutY = 300;
       checkoutButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #f7ed9e")
       checkoutButton.onAction = handle {
-        //need to add in method to checkout items
-        basketList.getItems.clear()
-        store.clearBasket()
+        val dialog = new Dialog[Stock]() {
+          initOwner(basketStage)
+          title = "Select customer"
+          headerText = "Select customer"
+        }
+        val custBox = new ComboBox[String]()
+        store.loadCustomers().foreach(x => custBox.getItems.add(x.name))
+        val accept = new ButtonType("Accept", ButtonData.OKDone)
+        val back = new ButtonType("Back", ButtonData.CancelClose)
+        dialog.dialogPane().buttonTypes = Seq(accept, back)
+        val grid = new GridPane() {
+          hgap = 10; vgap = 10; padding = Insets(20, 100, 10, 10)
+          add(new Label("Customer:"), 0, 0); add(custBox, 1, 0)
+        }
+        dialog.dialogPane().content = grid
+        val result = dialog.showAndWait()
+        result match {
+          case Some(accept) => for(item <- store.loadCustomers()) {
+            if(item.name == custBox.getSelectionModel.getSelectedItem) store.makeSale(99, item)
+            basketList.getItems.clear()
+            store.clearBasket()
+          }
+          case _ =>
+        }
       }
       val removeButton = new Button("Remove item"); removeButton.setPrefSize(300, 100); removeButton.layoutX = 950;
       removeButton.layoutY = 120; removeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #f7ed9e")
@@ -666,13 +819,13 @@ object GUI extends JFXApp {
       yesterSalesButton.layoutX = 670; yesterSalesButton.layoutY = 150
       yesterSalesButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
       yesterSalesButton.onAction = handle {
-        // previous day's sellings
+        resultField.setText("Yesterday's sellings were £:" + store.previousDaysSales)
       }
       val forecastButton = new Button("Forecast future profit"); forecastButton.setPrefSize(550, 50)
       forecastButton.layoutX = 670; forecastButton.layoutY = 300
       forecastButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
       forecastButton.onAction = handle {
-        //method here
+        //store.forecastExpectedProfit()
       }
       val homeButton = new Button("Home"); homeButton.setPrefSize(200, 150); homeButton.layoutX = 1000
       homeButton.layoutY = 500; homeButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
