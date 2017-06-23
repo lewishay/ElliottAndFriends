@@ -1,8 +1,10 @@
-1,60.0,55.0,0,Game,Battlefront2,Star Wars 12,2017-11-20
 2,80.0,79.0,20,Game,Call Of Duty,FPS 18,2017-10-02
-3,25.0,12.0,400,Game,Mario,family based fun 3,2015-10-12
-4,30.0,25.0,50,Game,Witcher 3,fantasy 18,2014-11-30
-5,10.0,0.0,50,Misc,jokerTee,tshirt,2017-06-21
-6,15.0,5.0,20,Misc,PopFigure,Statue,2017-06-21
-7,250.0,250.0,1,Misc,Gandalf's Staff,Staff is broken,2002-01-01
-8,250.0,250.0,1,Misc,Gandalf's Staff,Staff is broken,2002-01-01
+99,89.99,45.44,4,Game,Super Mario 64,A platform game,2017-05-29
+99,12.59,3.99,3,Game,The Legend of Zelda: Majora's Mask,Save Termina from the giant falling moon.,2006-12-06
+99,34.89,12.45,10,Hardware,nVidia GT1080i,Graphics card,2016-06-08
+99,45.99,12.44,14,Hardware,Xbox One Controller,Wireless controller,2014-05-02
+99,28.99,8.99,1,Hardware,Gamecube controller,A controller for the Nintendo Gamecube,2004-06-03
+99,12.99,2.45,24,Misc,Nintendo coffee mug,Coffee mug,2013-05-30
+99,12.99,0.0,13,Misc,Xbox Live Points (500),Online credit,2012-06-06
+11,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
+11,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
