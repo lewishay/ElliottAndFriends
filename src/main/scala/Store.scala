@@ -8,11 +8,14 @@ import java.time.format.DateTimeFormatter
 /**
   * Created by Lewis on 19/06/2017.
   */
-case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale], var customers: ArrayBuffer[Customer], var staff: ArrayBuffer[Staff], var heldStock: ArrayBuffer[Stock]) {
-
+case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale], var loggedInStaff: Staff = null) {
   def login(username: String, password: String): Boolean = {
-    val toReturn = false
-    toReturn
+    val staff = loadStaff()
+    for(i <- 0 to staff.length-1) if(username == staff(i).staffId && password == staff(i).surname){
+      loggedInStaff = staff(i)
+      true
+    }
+    false
   }
 
   def createCustomer(id: Int, name: String, email: String, isLoyalCustomer: Boolean, loyaltyPoints: Int): Unit = {
@@ -21,10 +24,13 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     saveCustomers(tempCustomers)
   }
 
-  def createStaff(staffId: Int, firstName: String, surname: String, jobTitle: String): Unit = {
-    val tempStaff = loadStaff()
-    tempStaff += Staff(staffId, firstName, surname, jobTitle)
-    saveStaff(tempStaff)
+  def createStaff(staffId: Int, firstName: String, surname: String, jobTitle: String): Boolean = {
+    if(loggedInStaff.jobTitle == "Manager") {
+      val tempStaff = loadStaff()
+      tempStaff += Staff(staffId, firstName, surname, jobTitle)
+      saveStaff(tempStaff)
+      true
+    } else false
   }
 
   def createStock(id: Int, salePrice: Double, costPerUnit: Double, quantity: Int, typeOfStock: String,
@@ -50,11 +56,15 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     saveCustomers(listOfCustomers)
   }
 
-  def editStaff(staffToEdit: Staff): Unit = {
-    val listOfStaff: ArrayBuffer[Staff] = loadStaff()
-    val staffIndex = staffToEdit.staffId - 1
-    if(listOfStaff(staffIndex).staffId == staffToEdit.staffId) listOfStaff(staffIndex) = staffToEdit
-    saveStaff(listOfStaff)
+  def editStaff(staffToEdit: Staff): Boolean = {
+    if(loggedInStaff.jobTitle != "Manger") return false
+    else {
+      val listOfStaff: ArrayBuffer[Staff] = loadStaff()
+      val staffIndex = staffToEdit.staffId - 1
+      if (listOfStaff(staffIndex).staffId == staffToEdit.staffId) listOfStaff(staffIndex) = staffToEdit
+      saveStaff(listOfStaff)
+      return true
+    }
   }
 
   def editStock(stockToEdit: Stock): Unit = {
@@ -64,22 +74,27 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     saveStock(listOfStock)
   }
 
-  def delete[T](toDelete: T): Unit = {
+  def delete[T](toDelete: T): Boolean = {
+    if(toDelete == Staff && loggedInStaff.jobTitle != "Manage") return false
     toDelete match{
-      case toDelete: Stock => if(heldStock.nonEmpty){
-        heldStock = heldStock.filter(_ != toDelete)
-        saveStock(heldStock)
+      case toDelete: Stock => if(loadStock().nonEmpty){
+        val tempStock = loadStock().filter(_ != toDelete)
+        saveStock(tempStock)
+        return true
       }
-      case toDelete: Staff => if(staff.nonEmpty) {
-        staff = staff.filter(_ != toDelete)
-        saveStaff(staff)
+      case toDelete: Staff => if(loadStaff().nonEmpty) {
+        val tempStaff = loadStaff().filter(_ != toDelete)
+        saveStaff(tempStaff)
+        return true
       }
-      case toDelete: Customer => if(customers.nonEmpty) {
-        customers = customers.filter(_ != toDelete)
-        saveCustomers(customers)
+      case toDelete: Customer => if(loadCustomers().nonEmpty) {
+        val tempCustomers = loadCustomers().filter(_ != toDelete)
+        saveCustomers(tempCustomers)
+        return true
       }
-      case _ => println("Please select a Customer, Staff Member, or Stock Item to be deleted")
-    }
+      case _ => return false
+      }
+    false
   }
 
   def makeSale(id: Int, customer: Customer = null, discountPointsToUse: Int = 0): Unit = {
@@ -136,6 +151,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
         thisSale.customer.loyaltyPoints += (thisSale.totalPrice / 10).toInt
         if(thisSale.totalPrice > 0){printReceipt(thisSale, 0)
           listOfSales += thisSale
+          val customers = loadCustomers()
           customers.foreach(customer => if(customer.email == thisSale.customer.email){customer.loyaltyPoints = thisSale.customer.loyaltyPoints})
           saveCustomers(customerList)
           clearBasket()
@@ -242,7 +258,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     temp
   }
 
-  def saveCustomers(customerToSave: ArrayBuffer[Customer]): Unit = {
+  def saveCustomers(customerToSave: ArrayBuffer[Customer]) = {
     val pw = new PrintWriter("customer.txt")
     for(i<-0 to customerToSave.length-1){
       pw.println(customerToSave(i).id + "," + customerToSave(i).name + "," + customerToSave(i).email + "," + customerToSave(i).isLoyalCustomer + "," + customerToSave(i).loyaltyPoints)
@@ -276,6 +292,7 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
       }
       var customerToAdd = listOfSales(i).customer.id + "#" + listOfSales(i).customer.name + "#" + listOfSales(i).customer.email + "#" + listOfSales(i).customer.isLoyalCustomer + "#" + listOfSales(i).customer.loyaltyPoints
       val fixFormating = listOfSales(i).timeOfSale.toString.split("T")
+      if(fixFormating(1).length == 8)fixFormating(1) = fixFormating(1).substring(0, fixFormating(1).length-3)
       val dateStringProper = fixFormating(0) + " " + fixFormating(1)
       pw.println(listOfSales(i).id + "," + dateStringProper + "," + stockForSale + "," + listOfSales(i).totalPrice + "," + customerToAdd)
     }

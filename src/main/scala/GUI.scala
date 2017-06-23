@@ -15,8 +15,7 @@ import scalafx.stage.Stage
   * Created by Lewis on 20/06/2017.
   */
 object GUI extends JFXApp {
-  val store = new Store("Manchester store", new ArrayBuffer[Stock], new ArrayBuffer[Sale], new ArrayBuffer[Customer],
-                        new ArrayBuffer[Staff], new ArrayBuffer[Stock])
+  val store = new Store("Manchester store", new ArrayBuffer[Stock], new ArrayBuffer[Sale])
   var searchResults = new ArrayBuffer[Stock]
   val searchResultsList = new ListView[String]
   val gamesList = new ListView[String]
