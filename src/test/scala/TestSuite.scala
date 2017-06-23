@@ -268,6 +268,28 @@ class TestSuite extends FunSuite {
     )
     store.listTodaysSales(todaysSales)
   }
+  test("Make a sale with guest"){
+    var teststore = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
+    teststore.basket += (Stock(1, 35.0, 30.0, 100, "Game", "Nioh", "Playstation 4 age 18", LocalDate.now))
+    teststore.makeSale(1)
+  }
+
+  test("Make a sale with non-loyalcustomer"){
+    var teststore = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
+    teststore.customers = teststore.loadCustomers()
+    teststore.basket += (Stock(1, 35.0, 30.0, 100, "Game", "Nioh", "Playstation 4 age 18", LocalDate.now()))
+    teststore.makeSale(1, teststore.customers(0))
+  }
+
+  test("Make a sale with loyalty points"){
+    var teststore = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty , ArrayBuffer.empty, ArrayBuffer.empty)
+    teststore.customers = teststore.loadCustomers()
+    teststore.basket += (Stock(1, 35.0, 30.0, 100, "Game", "Nioh", "Playstation 4 age 18", LocalDate.now()))
+    teststore.makeSale(1, teststore.customers(0), 20)
+
+    teststore.customers(0).loyaltyPoints = 20
+    teststore.saveCustomers(teststore.customers)
+  }
 }
 
 

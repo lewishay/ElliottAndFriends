@@ -82,20 +82,75 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
     }
   }
 
-  def makeSale(listOfItems: ArrayBuffer[Stock],id: Int, timeOfSale: LocalDateTime, customer : Customer = null): Unit = {
-    //generate receipt defined here
+  def makeSale(id: Int, customer: Customer = null, discountPointsToUse: Int = 0): Unit = {
+    listOfSales.clear()
+    var customerList = loadCustomers()
+
+    val printReceipt = (sale: Sale, discount: Double) => {
+      println(s"Sale $id: " + sale.timeOfSale + "\n  Products:")
+      for (i <- sale.listOfItems.indices) {
+        println("    Item " + (i + 1) + ": " + sale.listOfItems(i).productName + "    =" + sale.listOfItems(i).salePrice)
+      }
+      println(s"Discount: $discount \nTotal: " + sale.totalPrice)
+    }
+
+    def payWithLoyalty(sale: Sale, pointsToUse: Int): Sale = {
+      val discount: Double = (pointsToUse.toDouble/100)*10
+      println("Discount = " + discount)
+      println("Customer Points =" + sale.customer.loyaltyPoints)
+      if (discount <= sale.totalPrice && pointsToUse <= sale.customer.loyaltyPoints) {
+        sale.totalPrice = sale.totalPrice - discount
+        sale.customer.loyaltyPoints = sale.customer.loyaltyPoints - pointsToUse
+        sale
+      } else {
+        println("Customer either has not got enough loyalty points or you are applying more loyalty points than the cost of the purchase, sort it out, you moron")
+        sale.totalPrice = 0
+        sale
+      }
+
+    }
 
     if (customer == null) {
-      listOfSales += Sale(id, timeOfSale, listOfItems)
+      var thisSale = Sale(id, LocalDateTime.now, basket, 0)
+      println(LocalDateTime.now)
+      printReceipt(thisSale, 0)
+      loadSales()
+      listOfSales += thisSale
+      println(listOfSales.toString())
+      clearBasket()
+      //needs to save sales
     }
-    else if
-    (customer != null && !customer.isLoyalCustomer) {
-      listOfSales += Sale(id, timeOfSale, listOfItems, 0 , customer)
+    else if (customer != null && !customer.isLoyalCustomer) {
+      var thisSale = Sale(id, LocalDateTime.now, basket, 0, customer)
+      printReceipt(thisSale, 0)
+      loadSales()
+      listOfSales += thisSale
+      println(listOfSales.toString())
+      clearBasket()
+      //needs to save sales
     }
     else {
-      listOfSales += Sale(id, timeOfSale, listOfItems, 0 , customer)
+      var thisSale = Sale(id, LocalDateTime.now, basket, 0, customer)
+      if (thisSale.totalPrice - (discountPointsToUse/10) >= 0) {
+        thisSale = payWithLoyalty(thisSale, discountPointsToUse)
+        thisSale.customer.loyaltyPoints += (thisSale.totalPrice / 10).toInt
+        if(thisSale.totalPrice > 0){printReceipt(thisSale, 0)
+          listOfSales += thisSale
+          customers.foreach(customer => if(customer.email == thisSale.customer.email){customer.loyaltyPoints = thisSale.customer.loyaltyPoints})
+          saveCustomers(customerList)
+          clearBasket()
+          //needs to save sales
+        } else {
+          println("Transaction failed, please try again")
+        }
+      }
     }
+  }
 
+  def showPoints(customer: Customer): Unit = {
+    if (customer.isLoyalCustomer) {
+      println("Customer is loyal, and has " + customer.loyaltyPoints + " Loyalty Points, which are worth " + ((customer.loyaltyPoints / 100) * 90) + "Pounds")
+    } else println(" not a loyal dude")
   }
 
   def clearBasket(): Unit = {
