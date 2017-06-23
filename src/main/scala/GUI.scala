@@ -608,7 +608,8 @@ object GUI extends JFXApp {
         }
         val name = new TextField(); val email = new TextField(); val isLoyalCustomer = new ComboBox[Boolean]
         isLoyalCustomer.getItems().addAll(true, false); name.setText(theCustomer.name)
-        email.setText(theCustomer.email);
+        email.setText(theCustomer.email); val loyaltyPoints = new TextField()
+        loyaltyPoints.setText(theCustomer.loyaltyPoints.toString)
         if(theCustomer.isLoyalCustomer) isLoyalCustomer.getSelectionModel.selectFirst()
         else isLoyalCustomer.getSelectionModel.selectLast()
         val accept = new ButtonType("Accept", ButtonData.OKDone)
@@ -619,6 +620,7 @@ object GUI extends JFXApp {
           add(new Label("Name:"), 0, 0); add(name, 1, 0)
           add(new Label("Email:"), 0, 1); add(email, 1, 1)
           add(new Label("Loyal customer?"), 0, 2); add(isLoyalCustomer, 1, 2)
+          add(new Label("Loyalty points"), 0, 3); add(loyaltyPoints, 1, 3)
         }
         dialog.dialogPane().content = grid
         val result = dialog.showAndWait()
@@ -773,7 +775,7 @@ object GUI extends JFXApp {
         val result = dialog.showAndWait()
         result match {
           case Some(accept) => for(item <- store.loadCustomers()) {
-            if(item.name == custBox.getSelectionModel.getSelectedItem) store.makeSale(99, item)
+            if(item.name == custBox.getSelectionModel.getSelectedItem) store.makeSale(99, item, 0)
             basketList.getItems.clear()
             store.clearBasket()
           }

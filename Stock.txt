@@ -1,4 +1,3 @@
-2,80.0,79.0,20,Game,Call Of Duty,FPS 18,2017-10-02
 99,89.99,45.44,4,Game,Super Mario 64,A platform game,2017-05-29
 99,12.59,3.99,3,Game,The Legend of Zelda: Majora's Mask,Save Termina from the giant falling moon.,2006-12-06
 99,34.89,12.45,10,Hardware,nVidia GT1080i,Graphics card,2016-06-08
@@ -6,5 +5,4 @@
 99,28.99,8.99,1,Hardware,Gamecube controller,A controller for the Nintendo Gamecube,2004-06-03
 99,12.99,2.45,24,Misc,Nintendo coffee mug,Coffee mug,2013-05-30
 99,12.99,0.0,13,Misc,Xbox Live Points (500),Online credit,2012-06-06
-11,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
-11,300.0,250.0,1,Misc,Gandalf's Staff,Staff,2002-01-01
+99,80.0,79.0,20,Game,Call Of Duty,FPS 18,2017-10-02
