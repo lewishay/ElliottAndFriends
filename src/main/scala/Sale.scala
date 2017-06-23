@@ -7,13 +7,4 @@ import scala.collection.mutable.ArrayBuffer
 case class Sale(id: Int, timeOfSale: LocalDateTime, listOfItems: ArrayBuffer[Stock],
                 var totalPrice: Double = 0, customer: Customer = null) {
   for(item <- listOfItems) totalPrice = totalPrice + item.salePrice
-
-
-  def generateReceipt(): Unit = {
-
-  }
-
-  def canPayWithLoyalty(customer: Customer): Boolean = {
-    false
-  }
 }

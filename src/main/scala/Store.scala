@@ -11,9 +11,11 @@ import java.time.format.DateTimeFormatter
 case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffer[Sale], var loggedInStaff: Staff = null) {
   def login(username: String, password: String): Boolean = {
     val staff = loadStaff()
-    for(i <- 0 to staff.length-1) if(username == staff(i).staffId && password == staff(i).surname){
-      loggedInStaff = staff(i)
-      true
+    for(i <- 0 to staff.length-1) {
+      if(username == staff(i).staffId.toString && password == staff(i).surname){
+        loggedInStaff = staff(i)
+        return true
+      }
     }
     false
   }
