@@ -805,23 +805,23 @@ object GUI extends JFXApp {
       resultLabel.setStyle("-fx-font-size: 20pt")
       val resultField = new TextField(); resultField.setPrefSize(600, 50); resultField.layoutX = 250
       resultField.layoutY = 550; resultField.setStyle("-fx-font-size: 18pt")
-      val todayProfButton = new Button("View today's profit"); todayProfButton.setPrefSize(550, 50)
+      val todayProfButton = new Button("View today's sales"); todayProfButton.setPrefSize(550, 50)
       todayProfButton.layoutX = 60; todayProfButton.layoutY = 300
       todayProfButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
       todayProfButton.onAction = handle {
-        resultField.setText("Today's profit is: £" + store.calculateTodaysProfit(store.listOfSales))
+        //to be implemented
       }
-      val todaySalesButton = new Button("View today's sales"); todaySalesButton.setPrefSize(550, 50)
+      val todaySalesButton = new Button("View today's profit"); todaySalesButton.setPrefSize(550, 50)
       todaySalesButton.layoutX = 60; todaySalesButton.layoutY = 150
       todaySalesButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
       todaySalesButton.onAction = handle {
-        resultField.setText("Today's sellings are: £" + store.listTodaysSales(store.listOfSales))
+        resultField.setText("Today's profits are: £" + store.calculateDaysProfit(LocalDate.now()))
       }
-      val yesterSalesButton = new Button("View yesterday's sales"); yesterSalesButton.setPrefSize(550, 50)
+      val yesterSalesButton = new Button("View yesterday's profit"); yesterSalesButton.setPrefSize(550, 50)
       yesterSalesButton.layoutX = 670; yesterSalesButton.layoutY = 150
       yesterSalesButton.setStyle("-fx-font-size: 25pt; -fx-background-color: #ffcd96")
       yesterSalesButton.onAction = handle {
-        resultField.setText("Yesterday's sellings were £:" + store.previousDaysSales)
+        resultField.setText("Yesterday's profits were £" + store.calculateDaysProfit(LocalDate.of(2017, 6, 22)))
       }
       val forecastButton = new Button("Forecast future profit"); forecastButton.setPrefSize(550, 50)
       forecastButton.layoutX = 670; forecastButton.layoutY = 300

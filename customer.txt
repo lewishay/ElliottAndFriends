@@ -4,3 +4,4 @@
 5,Gandalf the Offwhite,shouldhaveuseddaz@middleearth.com,true,200000
 7,Gandalf the White,sweetjazz@middleearth.com,true,100000
 99,Scott Scala,scott_the_man_x@hotmail.com,false,0
+7,Gandalf the Grey,sweetjazz@middleearth.com,true,100000

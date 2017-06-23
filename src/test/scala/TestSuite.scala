@@ -250,13 +250,18 @@ class TestSuite extends FunSuite {
     var teststore = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty)
     teststore.basket += (Stock(1, 35.0, 30.0, 100, "Game", "Nioh", "Playstation 4 age 18", LocalDate.now))
     teststore.makeSale(1)
+
+    //once save sale is working, remove that sale from txt file
   }
 
   test("Make a sale with non-loyalcustomer"){
     var teststore = Store("Elliott & Friends", ArrayBuffer.empty , ArrayBuffer.empty)
     val customers = teststore.loadCustomers()
+    customers += Customer(1,"TEST","TEST@FAKE.COM", false, 0)
     teststore.basket += (Stock(1, 35.0, 30.0, 100, "Game", "Nioh", "Playstation 4 age 18", LocalDate.now()))
-    teststore.makeSale(1, customers(0))
+    teststore.makeSale(1, customers((customers.length)-1))
+
+    //once save sale is working, remove that sale from txt file
   }
 
   test("Make a sale with loyalty points"){
@@ -266,6 +271,8 @@ class TestSuite extends FunSuite {
     teststore.makeSale(1, customers(0), 20)
     customers(0).loyaltyPoints = 20
     teststore.saveCustomers(customers)
+
+    //once save sale is working, remove that sale from txt file
   }
 }
 

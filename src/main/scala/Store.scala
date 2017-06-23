@@ -127,24 +127,21 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
 
     }
 
-    if (customer == null) {
+    if (customer == null) { //Checkout as guest - WORKS
       var thisSale = Sale(id, LocalDateTime.now, basket, 0)
-      println(LocalDateTime.now)
       printReceipt(thisSale, 0)
       loadSales()
       listOfSales += thisSale
-      println(listOfSales.toString())
       clearBasket()
-      //needs to save sales
+      //saveSales()
     }
-    else if (customer != null && !customer.isLoyalCustomer) {
+    else if (customer != null && !customer.isLoyalCustomer) { //Checkout as non-loyal Customer - Fixed
       var thisSale = Sale(id, LocalDateTime.now, basket, 0, customer)
       printReceipt(thisSale, 0)
       loadSales()
       listOfSales += thisSale
-      println(listOfSales.toString())
       clearBasket()
-      //needs to save sales
+      //saveSales()
     }
     else {
       var thisSale = Sale(id, LocalDateTime.now, basket, 0, customer)
@@ -152,12 +149,13 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
         thisSale = payWithLoyalty(thisSale, discountPointsToUse)
         thisSale.customer.loyaltyPoints += (thisSale.totalPrice / 10).toInt
         if(thisSale.totalPrice > 0){printReceipt(thisSale, 0)
+          loadSales()
           listOfSales += thisSale
           val customers = loadCustomers()
           customers.foreach(customer => if(customer.email == thisSale.customer.email){customer.loyaltyPoints = thisSale.customer.loyaltyPoints})
           saveCustomers(customerList)
           clearBasket()
-          //needs to save sales
+          //saveSales()
         } else {
           println("Transaction failed, please try again")
         }
@@ -174,6 +172,16 @@ case class Store(id: String, basket: ArrayBuffer[Stock], listOfSales: ArrayBuffe
   def clearBasket(): Unit = {
     basket.clear()
   }
+
+  def calculateDaysProfit(date: LocalDate): Double = {
+    listOfSales.clear()
+    loadSales()
+    var profit: Double = 0
+    var dateSales = listOfSales.filter(_.timeOfSale.toLocalDate == date)
+    dateSales.foreach(sale=> sale.listOfItems.foreach(stockItem => profit += (stockItem.salePrice - stockItem.costPerUnit)))
+    profit
+  }
+
 
   def calculateTodaysProfit(todaysSales: ArrayBuffer[Sale]): Double = {
     var profit: Double = 0
